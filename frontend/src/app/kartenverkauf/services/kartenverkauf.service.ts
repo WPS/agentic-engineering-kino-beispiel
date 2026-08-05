@@ -5,6 +5,9 @@ import {
   Geldbetrag,
   Kartenbestellung,
   Kinokarte,
+  POPCORN_GESCHMACK_ENUM,
+  POPCORN_GROESSE_ENUM,
+  PopcornPortion,
   Preisanfrage,
   Saalplan,
   Vorstellung,
@@ -45,8 +48,15 @@ export class KartenverkaufService {
     return this.http.post<Geldbetrag>(`${this.kartenverkaufUrl}/preisanfrage`, preisanfrage);
   }
 
-  public starteVerkaufsvorgang(vorstellungId: string, plaetze: ZusammenhaengendePlaetze): Observable<Verkaufsvorgang> {
-    const bestellung: Kartenbestellung = {vorstellungId, plaetze};
+  public starteVerkaufsvorgang(vorstellungId: string, plaetze: ZusammenhaengendePlaetze, popcorn: PopcornPortion[] = []): Observable<Verkaufsvorgang> {
+    const bestellung: Kartenbestellung = {
+      vorstellungId,
+      plaetze,
+      popcorn: popcorn.map(portion => ({
+        groesse: POPCORN_GROESSE_ENUM[portion.groesse],
+        geschmack: POPCORN_GESCHMACK_ENUM[portion.geschmack],
+      })),
+    };
     return this.http.post<Verkaufsvorgang>(`${this.vorgaengeUrl}`, bestellung);
   }
 

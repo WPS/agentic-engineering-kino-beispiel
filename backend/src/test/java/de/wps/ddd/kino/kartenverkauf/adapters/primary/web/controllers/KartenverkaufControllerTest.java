@@ -2,6 +2,7 @@ package de.wps.ddd.kino.kartenverkauf.adapters.primary.web.controllers;
 
 import de.wps.ddd.kino.common.web.GlobalExceptionHandler;
 import de.wps.ddd.kino.kartenverkauf.adapters.primary.web.mappers.KartenDtoMapper;
+import de.wps.ddd.kino.kartenverkauf.adapters.primary.web.mappers.PopcornDtoMapper;
 import de.wps.ddd.kino.kartenverkauf.adapters.primary.web.mappers.SaalplanDtoMapper;
 import de.wps.ddd.kino.kartenverkauf.adapters.primary.web.mappers.VorstellungDtoMapper;
 import de.wps.ddd.kino.kartenverkauf.adapters.primary.web.mappers.ZahlungDtoMapper;
@@ -9,6 +10,10 @@ import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Auftragsnu
 import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Geldbetrag;
 import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Kinokarte;
 import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.KinokarteId;
+import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.PopcornGeschmack;
+import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.PopcornGroesse;
+import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.PopcornPortion;
+import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Popcornbestellung;
 import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Verkaufsvorgang;
 import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Verkaufsvorgangstatus;
 import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Zahlungsstatus;
@@ -60,7 +65,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(controllers = KartenverkaufController.class)
 @AutoConfigureMockMvc(addFilters = false)
 @Import({VorstellungDtoMapper.class, SaalplanDtoMapper.class, ZahlungDtoMapper.class, KartenDtoMapper.class,
-        GlobalExceptionHandler.class})
+        PopcornDtoMapper.class, GlobalExceptionHandler.class})
 class KartenverkaufControllerTest {
 
     @Autowired
@@ -168,7 +173,7 @@ class KartenverkaufControllerTest {
     @Test
     void starteVerkaufsvorgang_liefertVorgangMitAuftragsnummerUndGesamtpreis() throws Exception {
         // arrange
-        when(starteVerkaufsvorgang.fuer(any(), any())).thenReturn(verkaufsvorgang());
+        when(starteVerkaufsvorgang.fuer(any(), any(), any())).thenReturn(verkaufsvorgang());
         var body = """
                 {"vorstellungId":"%s","plaetze":{"plaetze":[{"reihe":4,"platz":1}]}}""".formatted(VORSTELLUNG_ID);
 
@@ -180,6 +185,26 @@ class KartenverkaufControllerTest {
                 .andExpect(jsonPath("$.vorstellungId").value(VORSTELLUNG_ID.toString()))
                 .andExpect(jsonPath("$.gesamtpreis.betrag").value(5000))
                 .andExpect(jsonPath("$.plaetze.plaetze[0].reihe").value(4));
+
+        verify(starteVerkaufsvorgang).fuer(any(), any(), eq(Popcornbestellung.leer()));
+    }
+
+    @Test
+    void starteVerkaufsvorgang_mitPopcorn_uebergibtDiePortionenAnDenPort() throws Exception {
+        // arrange
+        when(starteVerkaufsvorgang.fuer(any(), any(), any())).thenReturn(verkaufsvorgang());
+        var body = """
+                {"vorstellungId":"%s","plaetze":{"plaetze":[{"reihe":4,"platz":1}]},\
+                "popcorn":[{"groesse":"MITTEL","geschmack":"GEMISCHT"},{"groesse":"GROSS","geschmack":"SALZIG"}]}"""
+                .formatted(VORSTELLUNG_ID);
+
+        // act / assert
+        mockMvc.perform(post("/api/kartenverkauf/verkaufsvorgaenge").contentType(MediaType.APPLICATION_JSON).content(body))
+                .andExpect(status().isCreated());
+
+        verify(starteVerkaufsvorgang).fuer(any(), any(), eq(new Popcornbestellung(List.of(
+                new PopcornPortion(PopcornGroesse.MITTEL, PopcornGeschmack.GEMISCHT),
+                new PopcornPortion(PopcornGroesse.GROSS, PopcornGeschmack.SALZIG)))));
     }
 
     @Test
@@ -231,6 +256,7 @@ class KartenverkaufControllerTest {
                 new VorstellungId(VORSTELLUNG_ID),
                 new ZusammenhaengendePlaetze(List.of(new PlatzId(new ReiheNummer(4), new PlatzNummer(1)))),
                 Geldbetrag.euro(50, 0),
+                Popcornbestellung.leer(),
                 null,
                 0,
                 de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Verkaufsvorgangstatus.Laufend);

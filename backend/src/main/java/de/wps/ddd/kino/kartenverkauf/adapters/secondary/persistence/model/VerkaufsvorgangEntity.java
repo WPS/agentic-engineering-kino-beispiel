@@ -47,6 +47,14 @@ public class VerkaufsvorgangEntity {
 
     private int gesamtpreisInCent;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+            name = "popcorn_portionen",
+            schema = "kartenverkauf",
+            joinColumns = @JoinColumn(name = "auftragsnummer")
+    )
+    private List<PopcornPortionEmbeddable> popcornPortionen = new ArrayList<>();
+
     @Embedded
     @AttributeOverride(name = "status", column = @Column(name = "zahlungsstatus"))
     private ZahlungsvorgangEmbeddable zahlungsvorgang;
@@ -62,6 +70,19 @@ public class VerkaufsvorgangEntity {
     public static class PlatzEmbeddable {
         private int reihe;
         private int platz;
+    }
+
+    /**
+     * Eine persistierte Popcorn-Portion (Collection-Tabelle {@code kartenverkauf.popcorn_portionen}).
+     * Größe und Geschmack werden als Enum-Namen gespeichert.
+     */
+    @Embeddable
+    @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class PopcornPortionEmbeddable {
+        private String groesse;
+        private String geschmack;
     }
 
     @Embeddable

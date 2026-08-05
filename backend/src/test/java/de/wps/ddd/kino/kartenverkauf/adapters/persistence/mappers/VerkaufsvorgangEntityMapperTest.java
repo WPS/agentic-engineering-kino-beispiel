@@ -4,6 +4,10 @@ import de.wps.ddd.kino.kartenverkauf.adapters.secondary.persistence.mappers.Verk
 import de.wps.ddd.kino.kartenverkauf.adapters.secondary.persistence.model.VerkaufsvorgangEntity;
 import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Auftragsnummer;
 import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Geldbetrag;
+import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.PopcornGeschmack;
+import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.PopcornGroesse;
+import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.PopcornPortion;
+import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Popcornbestellung;
 import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Verkaufsvorgang;
 import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Verkaufsvorgangstatus;
 import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Zahlungsstatus;
@@ -33,11 +37,12 @@ class VerkaufsvorgangEntityMapperTest {
             new ZahlungsvorgangId(UUID.fromString("0d1b5e1a-2c3d-4e5f-8a9b-0c1d2e3f4a5b"));
 
     @Test
-    void toEntity() {
+    void toEntity_ohnePopcorn() {
         // arrange
         var verkaufsvorgang = new Verkaufsvorgang(auftragsnummer, vorstellungId,
                 new ZusammenhaengendePlaetze(List.of(platzId(4, 1), platzId(4, 2))),
                 Geldbetrag.euro(25, 0),
+                Popcornbestellung.leer(),
                 new Zahlungsvorgang(zahlungsvorgangId, 2, Geldbetrag.euro(25, 0), Zahlungsstatus.Eingegangen),
                 2, Verkaufsvorgangstatus.Abgeschlossen);
 
@@ -57,6 +62,30 @@ class VerkaufsvorgangEntityMapperTest {
         assertThat(entity.getZahlungsvorgang().getAnlauf()).isEqualTo(2);
         assertThat(entity.getZahlungsvorgang().getBetragInCent()).isEqualTo(2500);
         assertThat(entity.getZahlungsvorgang().getStatus()).isEqualTo("Eingegangen");
+        assertThat(entity.getPopcornPortionen()).isEmpty();
+    }
+
+    @Test
+    void toEntity_mitPopcorn_uebernimmtPortionen() {
+        // arrange
+        var bestellung = new Popcornbestellung(List.of(
+                new PopcornPortion(PopcornGroesse.MITTEL, PopcornGeschmack.GEMISCHT),
+                new PopcornPortion(PopcornGroesse.GROSS, PopcornGeschmack.SUESS)
+        ));
+        var verkaufsvorgang = new Verkaufsvorgang(auftragsnummer, vorstellungId,
+                new ZusammenhaengendePlaetze(List.of(platzId(4, 1))),
+                Geldbetrag.euro(37, 0),
+                bestellung,
+                null, 0, Verkaufsvorgangstatus.Laufend);
+
+        // act
+        var entity = mapper.toEntity(verkaufsvorgang);
+
+        // assert
+        assertThat(entity.getPopcornPortionen())
+                .containsExactly(
+                        new VerkaufsvorgangEntity.PopcornPortionEmbeddable("MITTEL", "GEMISCHT"),
+                        new VerkaufsvorgangEntity.PopcornPortionEmbeddable("GROSS", "SUESS"));
     }
 
     @Test
@@ -65,6 +94,7 @@ class VerkaufsvorgangEntityMapperTest {
         var entity = new VerkaufsvorgangEntity(auftragsnummer.nummer(), vorstellungId.uuid(), List.of(
                 new VerkaufsvorgangEntity.PlatzEmbeddable(4, 1),
                 new VerkaufsvorgangEntity.PlatzEmbeddable(4, 2)), 2500,
+                List.of(),
                 new VerkaufsvorgangEntity.ZahlungsvorgangEmbeddable(zahlungsvorgangId.wert(), 1, 2500, "Ausstehend"),
                 1, "Laufend");
 
@@ -84,6 +114,23 @@ class VerkaufsvorgangEntityMapperTest {
             assertThat(zahlungsvorgang.getAnlauf()).isEqualTo(1);
             assertThat(zahlungsvorgang.getStatus()).isEqualTo(Zahlungsstatus.Ausstehend);
         });
+        assertThat(verkaufsvorgang.getPopcornbestellung().istLeer()).isTrue();
+    }
+
+    @Test
+    void toDomain_mitPopcorn_rekonstruiertBestellung() {
+        // arrange
+        var entity = new VerkaufsvorgangEntity(auftragsnummer.nummer(), vorstellungId.uuid(),
+                List.of(new VerkaufsvorgangEntity.PlatzEmbeddable(4, 1)), 2800,
+                List.of(new VerkaufsvorgangEntity.PopcornPortionEmbeddable("KLEIN", "SALZIG")),
+                null, 0, "Laufend");
+
+        // act
+        var verkaufsvorgang = mapper.toDomain(entity);
+
+        // assert
+        assertThat(verkaufsvorgang.getPopcornbestellung().portionen())
+                .containsExactly(new PopcornPortion(PopcornGroesse.KLEIN, PopcornGeschmack.SALZIG));
     }
 
     private static PlatzId platzId(int reihe, int platz) {

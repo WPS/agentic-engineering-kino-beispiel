@@ -3,6 +3,10 @@ package de.wps.ddd.kino.kartenverkauf.adapters.persistence.repositories;
 import de.wps.ddd.kino.common.error.RessourceNichtGefunden;
 import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Auftragsnummer;
 import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Geldbetrag;
+import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.PopcornGeschmack;
+import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.PopcornGroesse;
+import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.PopcornPortion;
+import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Popcornbestellung;
 import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Verkaufsvorgang;
 import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Verkaufsvorgangstatus;
 import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Zahlungsstatus;
@@ -49,6 +53,27 @@ class VerkaufsvorgaengeIntegrationTest {
                 .containsExactlyInAnyOrder(platzId(4, 1), platzId(4, 2));
         assertThat(geladen.getGesamtpreis()).isEqualTo(Geldbetrag.euro(25, 0));
         assertThat(geladen.getStatus()).isEqualTo(Verkaufsvorgangstatus.Laufend);
+    }
+
+    @Test
+    void speichereUndHole_mitPopcorn_persistiertPortionenUnterDerUuid() {
+        // arrange
+        var bestellung = new Popcornbestellung(List.of(
+                new PopcornPortion(PopcornGroesse.MITTEL, PopcornGeschmack.GEMISCHT),
+                new PopcornPortion(PopcornGroesse.GROSS, PopcornGeschmack.SALZIG)
+        ));
+        var verkaufsvorgang = Verkaufsvorgang.starte(new VorstellungId(UUID.randomUUID()),
+                new ZusammenhaengendePlaetze(List.of(platzId(4, 1))), Geldbetrag.euro(24, 50), bestellung);
+
+        // act
+        verkaufsvorgaenge.speichere(verkaufsvorgang);
+        var geladen = verkaufsvorgaenge.hole(verkaufsvorgang.getAuftragsnummer());
+
+        // assert
+        assertThat(geladen.getPopcornbestellung().portionen())
+                .containsExactly(
+                        new PopcornPortion(PopcornGroesse.MITTEL, PopcornGeschmack.GEMISCHT),
+                        new PopcornPortion(PopcornGroesse.GROSS, PopcornGeschmack.SALZIG));
     }
 
     @Test

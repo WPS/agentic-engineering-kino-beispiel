@@ -49,7 +49,36 @@ describe('KartenverkaufService', () => {
     const req = httpMock.expectOne('/api/kartenverkauf/verkaufsvorgaenge');
 
     expect(req.request.method).toBe('POST');
-    expect(req.request.body).toEqual({vorstellungId: '090c173a-3636-4980-865a-1ec859eb4f90', plaetze});
+    expect(req.request.body).toEqual({vorstellungId: '090c173a-3636-4980-865a-1ec859eb4f90', plaetze, popcorn: []});
+    req.flush(null);
+  });
+
+  it('starteVerkaufsvorgang sendet Popcorn-Portionen als Enum-Namen', () => {
+    const plaetze = {plaetze: [{reihe: 4, platz: 1}]};
+
+    service.starteVerkaufsvorgang('70f79a3c-eb2f-48e4-af59-cda7a353635f', plaetze, [
+      {id: 1, groesse: 'Mittel', geschmack: 'gemischt'},
+      {id: 2, groesse: 'Groß', geschmack: 'süß'},
+    ]).subscribe();
+
+    const req = httpMock.expectOne('/api/kartenverkauf/verkaufsvorgaenge');
+
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body.popcorn).toEqual([
+      {groesse: 'MITTEL', geschmack: 'GEMISCHT'},
+      {groesse: 'GROSS', geschmack: 'SUESS'},
+    ]);
+    req.flush(null);
+  });
+
+  it('starteVerkaufsvorgang ohne Popcorn sendet eine leere Liste', () => {
+    const plaetze = {plaetze: [{reihe: 4, platz: 1}]};
+
+    service.starteVerkaufsvorgang('70f79a3c-eb2f-48e4-af59-cda7a353635f', plaetze).subscribe();
+
+    const req = httpMock.expectOne('/api/kartenverkauf/verkaufsvorgaenge');
+
+    expect(req.request.body.popcorn).toEqual([]);
     req.flush(null);
   });
 

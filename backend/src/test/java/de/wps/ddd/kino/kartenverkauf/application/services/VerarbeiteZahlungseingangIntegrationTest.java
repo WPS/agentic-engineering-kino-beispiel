@@ -3,6 +3,7 @@ package de.wps.ddd.kino.kartenverkauf.application.services;
 import de.wps.ddd.kino.IntegrationTestMitWochenplan;
 import de.wps.ddd.kino.common.error.GeschaeftsregelVerletzt;
 import de.wps.ddd.kino.kartenverkauf.KinokartenVerkauftDto;
+import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Popcornbestellung;
 import de.wps.ddd.kino.kartenverkauf.application.domain.sitzplatzvergabe.PlatzId;
 import de.wps.ddd.kino.kartenverkauf.application.domain.sitzplatzvergabe.PlatzNummer;
 import de.wps.ddd.kino.kartenverkauf.application.domain.sitzplatzvergabe.ReiheNummer;
@@ -59,7 +60,8 @@ class VerarbeiteZahlungseingangIntegrationTest extends IntegrationTestMitWochenp
             AssertablePublishedEvents veroeffentlichteEvents) {
         // arrange
         var vorstellungId = vorstellungId("The Fast and the Curious", "kleiner Saal", LocalDateTime.of(2025, 3, 23, 14, 30));
-        var auftragsnummer = starteVerkaufsvorgang.fuer(vorstellungId, gewaehltePlaetze).getAuftragsnummer();
+        var auftragsnummer = starteVerkaufsvorgang.fuer(vorstellungId, gewaehltePlaetze, Popcornbestellung.leer())
+                .getAuftragsnummer();
         var zahlungsvorgangId = starteZahlungsvorgang.fuer(auftragsnummer).getId();
 
         // act
@@ -89,7 +91,8 @@ class VerarbeiteZahlungseingangIntegrationTest extends IntegrationTestMitWochenp
     void zahlungEingegangen_zweimal_stelltKeineZweitenKartenAus() {
         // arrange
         var vorstellungId = vorstellungId("The Fast and the Curious", "kleiner Saal", LocalDateTime.of(2025, 3, 23, 14, 30));
-        var auftragsnummer = starteVerkaufsvorgang.fuer(vorstellungId, gewaehltePlaetze).getAuftragsnummer();
+        var auftragsnummer = starteVerkaufsvorgang.fuer(vorstellungId, gewaehltePlaetze, Popcornbestellung.leer())
+                .getAuftragsnummer();
         var zahlungsvorgangId = starteZahlungsvorgang.fuer(auftragsnummer).getId();
         verarbeiteZahlungseingang.fuer(new ZahlungEingegangen(zahlungsvorgangId));
 
