@@ -1,8 +1,9 @@
-import {Component, DestroyRef, inject, input, OnInit, output, signal, viewChild} from '@angular/core';
+import {Component, computed, DestroyRef, inject, input, OnInit, output, signal, viewChild} from '@angular/core';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {interval, Observable, of, switchMap, takeWhile, tap} from 'rxjs';
 import {
   Geldbetrag,
+  PopcornPortion,
   Verkaufsvorgang,
   Vorstellung,
   Zahlungsvorgang,
@@ -29,9 +30,19 @@ export class ZahlungComponent implements OnInit {
 
   readonly plaetze = input.required<ZusammenhaengendePlaetze>();
 
+  readonly popcornPortionen = input<PopcornPortion[]>([]);
+
+  readonly popcornGesamt = input<number>(0);
+
   readonly onZahlungBestaetigt = output<Verkaufsvorgang>();
 
   readonly gesamtbetrag = signal<Geldbetrag | undefined>(undefined);
+
+  readonly anzahlKinokarten = computed(() => this.plaetze().plaetze.length);
+
+  readonly hasPopcorn = computed(() => this.popcornGesamt() > 0);
+
+  readonly zuZahlenderBetrag = computed(() => (this.gesamtbetrag()?.betrag ?? 0) + this.popcornGesamt());
 
   readonly verkaufsvorgang = signal<Verkaufsvorgang | undefined>(undefined);
 
@@ -85,7 +96,7 @@ export class ZahlungComponent implements OnInit {
     if (vorhandener) {
       return of(vorhandener);
     }
-    return this.kartenverkaufService.starteVerkaufsvorgang(this.vorstellung().uuid, this.plaetze())
+    return this.kartenverkaufService.starteVerkaufsvorgang(this.vorstellung().uuid, this.plaetze(), this.popcornPortionen())
       .pipe(tap((verkaufsvorgang) => this.verkaufsvorgang.set(verkaufsvorgang)));
   }
 

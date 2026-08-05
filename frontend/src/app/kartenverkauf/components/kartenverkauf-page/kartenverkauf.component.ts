@@ -1,10 +1,18 @@
 import {Component, computed, input, signal, viewChild} from '@angular/core';
 import {VorstellungComponent} from '../vorstellung/vorstellung.component';
-import {Kinokarte, Verkaufsvorgang, Vorstellung, ZusammenhaengendePlaetze} from '../../dtos/kartenverkauf';
+import {
+  Kinokarte,
+  POPCORN_GROESSE_PREIS,
+  PopcornPortion,
+  Verkaufsvorgang,
+  Vorstellung,
+  ZusammenhaengendePlaetze,
+} from '../../dtos/kartenverkauf';
 import {PlatzanzahlComponent} from '../platzanzahl/platzanzahl.component';
 import {SaalplanComponent} from '../saalplan/saalplan.component';
 import {ZahlungComponent} from '../zahlung/zahlung.component';
 import {KinokarteComponent} from '../kinokarte/kinokarte.component';
+import {PopcornComponent} from '../popcorn/popcorn.component';
 import {NavbarComponent} from '../../../common/components/navbar/navbar.component';
 import {BadgeComponent} from './badge/badge.component';
 
@@ -16,6 +24,7 @@ import {BadgeComponent} from './badge/badge.component';
     SaalplanComponent,
     ZahlungComponent,
     KinokarteComponent,
+    PopcornComponent,
     NavbarComponent,
     BadgeComponent,
   ],
@@ -28,8 +37,12 @@ export class KartenverkaufComponent {
   readonly gewaehlteVorstellung = signal<Vorstellung | undefined>(undefined);
   readonly gewaehltePlatzanzahl = signal<number | undefined>(undefined);
   readonly gewaehltePlaetze = signal<ZusammenhaengendePlaetze | undefined>(undefined);
+  readonly popcornPortionen = signal<PopcornPortion[]>([]);
   readonly zahlungsbestaetigung = signal<Verkaufsvorgang | undefined>(undefined);
   readonly erhalteneKinokarten = signal<Kinokarte[] | undefined>(undefined);
+
+  readonly popcornGesamt = computed(() =>
+    this.popcornPortionen().reduce((summe, portion) => summe + POPCORN_GROESSE_PREIS[portion.groesse], 0));
 
   readonly platzanzahlComponent = viewChild.required<PlatzanzahlComponent>('platzanzahlComponent');
   readonly saalplanComponent = viewChild.required<SaalplanComponent>('saalplanComponent');
@@ -44,6 +57,7 @@ export class KartenverkaufComponent {
     () => this.gewaehltePlatzanzahl() !== undefined && this.gewaehltePlaetze() === undefined,
   );
   readonly zeigePlatzwahlFertig = computed(() => this.gewaehltePlaetze() !== undefined);
+  readonly zeigePopcorn = computed(() => this.gewaehltePlaetze() !== undefined);
   readonly zeigeZahlungAktiv = computed(
     () => this.gewaehltePlaetze() !== undefined && this.zahlungsbestaetigung() === undefined,
   );
@@ -63,6 +77,10 @@ export class KartenverkaufComponent {
 
   plaetzeGewaehlt(plaetze: ZusammenhaengendePlaetze) {
     this.gewaehltePlaetze.set(plaetze);
+  }
+
+  popcornGeaendert(portionen: PopcornPortion[]) {
+    this.popcornPortionen.set(portionen);
   }
 
   zahlungBestaetigt(zahlungsbestaetigung: Verkaufsvorgang) {

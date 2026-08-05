@@ -1,7 +1,14 @@
-<div class="badge badge-lg badge-primary badge-soft mt-6 pr-1.5">
+<div class="badge badge-lg badge-soft mt-6 pr-1.5"
+     [class.badge-primary]="variant() === 'primary'"
+     [class.badge-accent]="variant() === 'accent'">
 <span>{{text()}}</span>
-<input type="checkbox"
-       class="checkbox checkbox-xs cursor-default border-primary text-primary"
-       [checked]="checked()"
-       (click)="$event.preventDefault()">
+@if (optional()) {
+  <span class="text-[11px] opacity-60 ml-1">optional</span>
+}
+@if (showCheckbox()) {
+  <input type="checkbox"
+         class="checkbox checkbox-xs cursor-default border-primary text-primary"
+         [checked]="checked()"
+         (click)="$event.preventDefault()">
+}
 </div>
