@@ -1,0 +1,23 @@
+<div class="card card-border m-4 shadow-md bg-gray-50">
+  <div class="card-body items-center">
+      <p class="italic">Sie haben folgende Vorstellung gewählt:</p>
+    @if (vorstellung(); as v) {
+      <div class="card-title">
+        {{ v.film }}
+      </div>
+      <div class="text-info-content">
+        {{ v.beginn | date : 'EEEE' }}
+        <span>⋅</span>
+        {{ v.beginn | date : 'dd.MM.yyyy' }}
+        <span>⋅</span>
+        {{ v.beginn | date : 'HH:mm' }} Uhr
+        <span>⋅</span>
+        {{ v.saal }}
+      </div>
+    } @else {
+      <div class="loading loading-dots loading-sm"></div>
+    }
+    </div>
+  </div>
+
+
