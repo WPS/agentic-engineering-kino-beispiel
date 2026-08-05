@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Umsetzungsplan – Popcorn-Upsell im Kartenverkauf</title>
+<style>
+  :root {
+    --primary: #1f9d6f;
+    --accent: #d97757;
+    --bg: #f9fafb;
+    --surface: #ffffff;
+    --border: #e2e8f0;
+    --text: #1f2933;
+    --muted: #64748b;
+    --code-bg: #0f172a;
+    --code-fg: #e2e8f0;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: var(--text);
+    background: var(--bg);
+    margin: 0;
+    line-height: 1.6;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 32px 24px 96px; }
+  header.page {
+    border-bottom: 3px solid var(--primary);
+    padding-bottom: 16px;
+    margin-bottom: 8px;
+  }
+  h1 { font-size: 30px; margin: 0 0 4px; }
+  h2 {
+    font-size: 22px; margin: 40px 0 12px;
+    padding-bottom: 6px; border-bottom: 1px solid var(--border);
+  }
+  h3 { font-size: 17px; margin: 24px 0 8px; }
+  .lead { color: var(--muted); font-size: 16px; margin: 8px 0 0; }
+  .badge {
+    display: inline-block; font-size: 12px; font-weight: 600;
+    padding: 2px 10px; border-radius: 999px; vertical-align: middle;
+  }
+  .badge-accent { background: #fdeae3; color: var(--accent); }
+  .badge-primary { background: #e3f5ec; color: var(--primary); }
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 18px 22px; margin: 16px 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,.05);
+  }
+  code {
+    background: #eef2f7; padding: 1px 6px; border-radius: 5px;
+    font-family: "SF Mono", "Cascadia Code", Consolas, monospace; font-size: 13.5px;
+  }
+  pre {
+    background: var(--code-bg); color: var(--code-fg);
+    padding: 14px 16px; border-radius: 10px; overflow-x: auto;
+    font-size: 13px; line-height: 1.5;
+  }
+  pre code { background: none; color: inherit; padding: 0; }
+  table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 14.5px; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { background: #f1f5f9; }
+  ul, ol { margin: 8px 0; padding-left: 22px; }
+  li { margin: 4px 0; }
+  .step {
+    border-left: 4px solid var(--primary); background: var(--surface);
+    border-radius: 0 12px 12px 0; padding: 16px 22px; margin: 18px 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,.05);
+  }
+  .step.optional { border-left-color: var(--accent); }
+  .step h3 { margin-top: 0; }
+  .commit {
+    display: inline-block; font-family: "SF Mono", Consolas, monospace; font-size: 12.5px;
+    background: #0f172a; color: #a7f3d0; padding: 4px 10px; border-radius: 6px; margin-top: 8px;
+  }
+  .files { font-size: 13.5px; color: var(--muted); }
+  .files b { color: var(--text); }
+  .note { background: #fff8ec; border: 1px solid #f5d99a; border-radius: 10px; padding: 12px 16px; margin: 14px 0; font-size: 14.5px; }
+  .tag { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+  .pill { display:inline-block; background:#eef2f7; border-radius:6px; padding:1px 8px; font-size:12.5px; margin:1px 2px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="page">
+  <h1>🍿 Umsetzungsplan – Popcorn-Upsell im Kartenverkauf</h1>
+  <p class="lead">Optionale Popcorn-Bestellung zwischen Platzauswahl und Bezahlung – persistiert am bestehenden
+  Bounded Context <strong>Kartenverkauf</strong>, identifiziert über die bestehende UUID (<code>Auftragsnummer</code>).</p>
+</header>
+
+<h2>1. Ziel &amp; Anforderungen</h2>
+<div class="card">
+  <ul>
+    <li>Neue Karte <span class="badge badge-accent">Popcorn dazu? · optional</span> <strong>nach</strong> „Plätze wählen“,
+        <strong>vor</strong> „Kinokarten zahlen“ (siehe Design-Handoff &amp; Screenshots).</li>
+    <li>Mehrere Portionen möglich (je Portion: Größe <span class="pill">Klein 3€</span><span class="pill">Mittel 5€</span><span class="pill">Groß 7€</span>,
+        Geschmack <span class="pill">salzig</span><span class="pill">süß</span><span class="pill">gemischt</span>). Keine Mengen-Stepper – mehr Popcorn = weitere Portion.</li>
+    <li>Live-Summe: Zahlkarte zeigt Aufschlüsselung Kinokarten + Popcorn = Gesamtbetrag.</li>
+    <li><strong>Persistenz:</strong> Die Bestellung (inkl. Popcorn) wird in der DB gespeichert, identifiziert über die
+        <strong>bestehende UUID</strong>, sodass nachvollziehbar ist, dass sie eingegangen ist und bezahlt wurde.</li>
+    <li><strong>Kein neuer Bounded Context</strong> – alles wird im bestehenden BC <code>kartenverkauf</code> ergänzt.</li>
+    <li>Design: daisyUI v5 / Tailwind v4, Theme <code>emerald</code>; <code>accent</code> (Lachs) nur als Akzent, Kartenfläche nicht einfärben.</li>
+  </ul>
+</div>
+
+<h2>2. Architektur-Entscheidung</h2>
+<div class="card">
+  <p>Die bestehende Aggregatwurzel <code>Verkaufsvorgang</code> (Paket <code>application.domain.kartenverkauf</code>) ist
+  bereits über die <code>Auftragsnummer</code> (UUID) identifiziert, wird in Tabelle
+  <code>kartenverkauf.verkaufsvorgaenge</code> persistiert und hält fest, <em>was</em> zu welchem Preis verkauft wird
+  (<code>Verkaufsvorgangstatus Laufend → Abgeschlossen</code>). Der <code>Zahlungsvorgang</code> ist eine
+  <code>@Entity</code> <strong>in</strong> diesem Aggregat und trägt den Zahlungsstatus
+  <code>Ausstehend → Eingegangen / Abgebrochen</code> – zusammen also genau „Bestellung eingegangen &amp; bezahlt“.</p>
+  <p><strong>Entscheidung:</strong> Die Popcorn-Bestellung wird als Teil des <code>Verkaufsvorgang</code>-Aggregats
+  geführt – dort, wo auch Vorstellung, Plätze und Gesamtpreis liegen. Damit erfüllen wir „über bestehende UUID
+  identifiziert“, „in der DB persistiert“ und „im bestehenden BC“ ohne neuen Kontext und ohne neues Aggregat.</p>
+  <table>
+    <tr><th>Schicht</th><th>Neu / geändert</th></tr>
+    <tr><td>Domain</td><td><code>PopcornGroesse</code>, <code>PopcornGeschmack</code>, <code>PopcornPortion</code>, <code>Popcornbestellung</code> (neu, im Paket des Aggregats <code>domain.kartenverkauf</code>); <code>Verkaufsvorgang</code> hält eine <code>Popcornbestellung</code></td></tr>
+    <tr><td>Persistenz</td><td><code>VerkaufsvorgangEntity</code> + <code>@ElementCollection</code> Popcorn-Portionen (Tabelle <code>kartenverkauf.popcorn_portionen</code>); <code>VerkaufsvorgangEntityMapper</code></td></tr>
+    <tr><td>Application</td><td>Primärport + Service <code>StarteVerkaufsvorgang</code> nehmen die <code>Popcornbestellung</code> entgegen und schreiben <em>Kartenpreis + Popcorn</em> als Gesamtpreis fest</td></tr>
+    <tr><td>Web</td><td><code>KartenbestellungDto</code> um <code>popcorn</code> erweitert + <code>PopcornPortionDto</code> + <code>PopcornDtoMapper</code>; <code>KartenverkaufController</code> gibt die Portionen an den Primärport weiter</td></tr>
+    <tr><td>Frontend</td><td>neue <code>PopcornComponent</code>, Badge-Variante, Einbindung in Flow, Breakdown in <code>ZahlungComponent</code>, Service-Erweiterung</td></tr>
+  </table>
+  <div class="note">
+    <strong>Preis-Fluss:</strong> <code>POST …/preisanfrage</code> bleibt unverändert (nur Kartenpreis für die
+    Live-Anzeige). Beim Start des Verkaufsvorgangs postet das Frontend die Popcorn-Portionen an
+    <code>POST …/verkaufsvorgaenge</code>; <code>StarteVerkaufsvorgang</code> ermittelt den Kartenpreis autoritativ
+    selbst und schreibt <em>Gesamt = Kartenpreis + Popcorn</em> am Verkaufsvorgang fest. Der anschließende
+    <code>POST …/verkaufsvorgaenge/{auftragsnummer}/zahlungsvorgaenge</code> braucht deshalb keinen Body – der
+    Zahlungsvorgang läuft über genau diesen festgeschriebenen Betrag. Größen-Preise (3/5/7 €) liegen serverseitig in
+    der Domäne.
+  </div>
+</div>
+
+<h2>3. Schritte (jeweils ein Commit)</h2>
+
+<div class="step optional">
+  <span class="tag">Schritt 0</span>
+  <h3>Plan dokumentieren</h3>
+  <p>Diesen Plan als HTML in <code>docs/</code> ablegen.</p>
+  <p class="files"><b>Dateien:</b> <code>docs/plan_popcorn_upsell.html</code></p>
+  <span class="commit">docs: Umsetzungsplan Popcorn-Upsell als HTML</span>
+</div>
+
+<div class="step">
+  <span class="tag">Schritt 1 · Backend Domain</span>
+  <h3>Popcorn-Domänenmodell + Verkaufsvorgang erweitern</h3>
+  <ul>
+    <li><code>PopcornGroesse</code> (Enum, <code>@ValueObject</code>): <code>KLEIN</code>/<code>MITTEL</code>/<code>GROSS</code> mit <code>Geldbetrag preis()</code> (3,00 / 5,00 / 7,00 €).</li>
+    <li><code>PopcornGeschmack</code> (Enum, <code>@ValueObject</code>): <code>SALZIG</code>/<code>SUESS</code>/<code>GEMISCHT</code>.</li>
+    <li><code>PopcornPortion</code> (<code>@ValueObject</code> record): <code>groesse</code> + <code>geschmack</code>, <code>Geldbetrag preis()</code>.</li>
+    <li><code>Popcornbestellung</code> (<code>@ValueObject</code>): kapselt <code>List&lt;PopcornPortion&gt;</code>, <code>Geldbetrag gesamtpreis()</code> (0&nbsp;€ bei leer), <code>boolean istLeer()</code>; defensiv-immutable.</li>
+    <li><code>Verkaufsvorgang</code>: Feld <code>Popcornbestellung popcornbestellung</code>; Fabrik <code>starte(vorstellungId, plaetze, gesamtpreis, Popcornbestellung)</code> (die bisherige Fabrik <code>starte(vorstellungId, plaetze, gesamtpreis)</code> bleibt als „leere Bestellung“ erhalten → Build bleibt grün); Getter und <code>popcornpreis()</code>.</li>
+    <li>Unit-Tests: <code>PopcornPortionTest</code>, <code>PopcornbestellungTest</code> (Preislogik, Summe, leer), <code>VerkaufsvorgangTest</code> (Popcorn gespeichert, Status-Übergänge unverändert).</li>
+  </ul>
+  <p class="files"><b>Paket:</b> <code>application.domain.kartenverkauf</code> – die Popcorn-Wertobjekte sind Bestandteile
+  des <code>Verkaufsvorgang</code>-Aggregats und liegen deshalb in dessen Paket (ein eigenes <code>domain.popcorn</code>
+  wäre ein Paketzyklus, weil Popcorn den <code>Geldbetrag</code> braucht – dieselbe Begründung wie beim
+  <code>Zahlungsvorgang</code>).</p>
+  <span class="commit">feat(kartenverkauf): Popcorn-Domänenmodell + Verkaufsvorgang</span>
+</div>
+
+<div class="step">
+  <span class="tag">Schritt 2 · Backend Persistenz</span>
+  <h3>Popcorn-Portionen persistieren</h3>
+  <ul>
+    <li><code>VerkaufsvorgangEntity</code>: <code>@ElementCollection(fetch = EAGER)</code> + <code>@CollectionTable(name="popcorn_portionen", schema="kartenverkauf")</code> eines <code>@Embeddable</code> <code>PopcornPortionEmbeddable</code> (Felder <code>groesse</code>, <code>geschmack</code> als String) – wie schon bei den gewählten Plätzen.</li>
+    <li><code>VerkaufsvorgangEntityMapper</code>: Portionen Domain ↔ Entity abbilden (Enum-Namen).</li>
+    <li>Unit-Test <code>VerkaufsvorgangEntityMapperTest</code>: Roundtrip mit Popcorn.</li>
+    <li>Integrationstest <code>VerkaufsvorgaengeIntegrationTest</code>: DB-Roundtrip unter der bestehenden UUID.</li>
+    <li>Schema entsteht automatisch (<code>ddl-auto=create</code>); kein <code>data.sql</code> nötig.</li>
+  </ul>
+  <span class="commit">feat(kartenverkauf): persistiere Popcorn-Portionen am Verkaufsvorgang</span>
+</div>
+
+<div class="step">
+  <span class="tag">Schritt 3 · Backend Application + Web</span>
+  <h3>Service, Port, Controller, DTOs</h3>
+  <ul>
+    <li>Primärport <code>ports.primary.StarteVerkaufsvorgang</code> &amp; Service <code>services.StarteVerkaufsvorgang</code>: <code>fuer(VorstellungId, ZusammenhaengendePlaetze, Popcornbestellung)</code>; der Service ermittelt den Kartenpreis über <code>BerechneGesamtpreis</code>, addiert den Popcornpreis und legt den Verkaufsvorgang mit Bestellung an.</li>
+    <li><code>PopcornPortionDto(String groesse, String geschmack)</code>; <code>KartenbestellungDto(UUID vorstellungId, ZusammenhaengendePlaetzeDto plaetze, List&lt;PopcornPortionDto&gt; popcorn)</code> (<code>/preisanfrage</code> bleibt auf <code>PreisanfrageDto</code>).</li>
+    <li><code>PopcornDtoMapper</code>: DTO → <code>Popcornbestellung</code> (robust gegen <code>null</code>/leer; Label-Mapping Klein/Mittel/Groß ↔ Enum).</li>
+    <li><code>KartenverkaufController#starteVerkaufsvorgang</code>: Popcorn via Mapper an den Primärport; der <code>VerkaufsvorgangDto.gesamtpreis</code> trägt damit Karten + Popcorn.</li>
+    <li><code>@WebMvcTest</code> <code>KartenverkaufControllerTest</code>: Request mit Popcorn → Portionen erreichen den Port. Integrationstest: Gesamtpreis = Kartenpreis + Popcorn.</li>
+  </ul>
+  <div class="note">Dieser Commit ändert die Port-Signatur und passt Controller + bestehende Tests gemeinsam an, damit der Build grün bleibt.</div>
+  <span class="commit">feat(kartenverkauf): Popcorn beim Start des Verkaufsvorgangs (Service + REST)</span>
+</div>
+
+<div class="step">
+  <span class="tag">Schritt 4 · Frontend DTOs + Service</span>
+  <h3>DTOs &amp; KartenverkaufService</h3>
+  <ul>
+    <li><code>dtos/kartenverkauf.ts</code>: <code>PopcornGroesse</code>, <code>PopcornGeschmack</code>, <code>PopcornPortion</code>, <code>Kartenbestellung</code> (mit Popcorn).</li>
+    <li><code>KartenverkaufService.starteVerkaufsvorgang(vorstellungId, plaetze, popcorn[])</code> → POST <code>…/verkaufsvorgaenge</code> inkl. Portionen (Label → Enum-Namen).</li>
+    <li>Service-Spec aktualisieren.</li>
+  </ul>
+  <span class="commit">feat(frontend): Popcorn-DTOs + Service-Erweiterung</span>
+</div>
+
+<div class="step">
+  <span class="tag">Schritt 5 · Frontend PopcornComponent</span>
+  <h3>Neue Komponente + Badge-Variante</h3>
+  <ul>
+    <li><code>components/popcorn/</code>: Signals <code>portionen</code>, <code>nextId</code>; computed <code>hasPopcorn</code>, <code>popcornGesamt</code>; Output <code>onPopcornGeaendert</code> (Portionen + Summe).</li>
+    <li>Leerzustand (Beliebt-Button + „Selbst zusammenstellen“) und Aktiv-Zustand (Portionsblöcke: Größe-<code>join</code>, Geschmack-Radios, Zeilensumme, „+ Weitere Portion“, „Doch kein Popcorn“) gemäß Design – daisyUI-Klassen, <code>btn-accent</code> nur als Akzent.</li>
+    <li><code>BadgeComponent</code> um Varianten erweitern: <code>variant</code> (primary|accent), <code>optional</code>-Label, Checkbox optional ausblendbar.</li>
+    <li>Component-Spec: add/remove/Größe/Geschmack/Summe.</li>
+  </ul>
+  <span class="commit">feat(frontend): PopcornComponent + Badge-Variante</span>
+</div>
+
+<div class="step">
+  <span class="tag">Schritt 6 · Frontend Integration</span>
+  <h3>Flow + Zahlungs-Breakdown</h3>
+  <ul>
+    <li><code>KartenverkaufComponent</code>: Popcorn-Schritt zwischen „Plätze wählen“ und „Kinokarten zahlen“; Signals <code>popcornPortionen</code> + <code>popcornGesamt</code>; Sichtbarkeit ab <code>zeigePlatzwahlFertig()</code>.</li>
+    <li><code>ZahlungComponent</code>: Inputs <code>popcornPortionen</code> + <code>popcornGesamt</code>; Breakdown (Kinokarten (n) · Karten­summe / Popcorn / Trennlinie / Gesamt); beim Anlegen des Verkaufsvorgangs Portionen mitsenden.</li>
+    <li>Specs für beide aktualisieren.</li>
+  </ul>
+  <span class="commit">feat(frontend): Popcorn in Flow integrieren + Zahlungs-Breakdown</span>
+</div>
+
+<div class="step">
+  <span class="tag">Schritt 7 · Verifikation</span>
+  <h3>Tests &amp; Build</h3>
+  <ul>
+    <li>Backend: <code>cd backend &amp;&amp; ./mvnw clean verify</code> (Unit + Integration + ArchUnit + Modularity).</li>
+    <li>Frontend: <code>cd frontend &amp;&amp; npm run build &amp;&amp; npm run test:ci</code>.</li>
+    <li>Fehler beheben; optional App starten und Screenshots vergleichen.</li>
+  </ul>
+  <span class="commit">test: Popcorn-Upsell Backend + Frontend verifizieren</span>
+</div>
+
+<h2>4. Risiken &amp; Hinweise</h2>
+<div class="card">
+  <ul>
+    <li><strong>ArchUnit/Modularity:</strong> Alle neuen Typen liegen im BC <code>kartenverkauf</code>; keine neuen kontextübergreifenden Abhängigkeiten → bestehende Architekturtests bleiben gültig (neue Value Objects mit <code>@ValueObject</code> annotieren). Die Popcorn-Wertobjekte gehören ins Paket ihres Aggregats (<code>domain.kartenverkauf</code>) – ein eigenes Popcorn-Paket würde die Zyklenregel <code>slices().beFreeOfCycles()</code> brechen.</li>
+    <li><strong>Enum-Mapping:</strong> UI-Labels (Klein/Mittel/Groß, salzig/süß/gemischt) ↔ Backend-Enums (KLEIN/MITTEL/GROSS, SALZIG/SUESS/GEMISCHT) zentral im jeweiligen Mapper.</li>
+    <li><strong>Abwärtskompatibilität:</strong> Ohne Popcorn (leere Liste) bleibt das Verhalten identisch; Zahlkarte zeigt dann nur den Kartenpreis.</li>
+    <li><strong>Geldbeträge</strong> intern in Cent (<code>Geldbetrag</code>); Anzeige über <code>GeldbetragPipe</code> bzw. deutsche Formatierung.</li>
+    <li><strong>DB:</strong> Persistenter File-DB mit <code>ddl-auto=create</code> erzeugt die neue Tabelle beim Start automatisch; Inspektion via H2-Konsole möglich.</li>
+  </ul>
+</div>
+
+</div>
+</body>
+</html>
