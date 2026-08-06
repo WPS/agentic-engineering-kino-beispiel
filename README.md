@@ -39,8 +39,9 @@ Es wird zunächst die Filmauswahl, a.k.a das Kinoprogramm, angezeigt. Diese umfa
 - Anzeige der aktuellen Woche als Kalenderleiste
 - Anzeige der Filmvorstellungen des ausgewählten Wochentages
 
-Nicht wundern: das "heutige" Datum ist im Code fest auf den 19.03.2025 gesetzt, da die Beispieldaten statisch hinterlegt
-sind. Durch Klick auf eine Vorstellung gelangt man zum Kartenverkauf. Dieser umfasst folgende Funktionen:
+Die Beispieldaten werden beim Start für die aktuelle Kalenderwoche erzeugt — die angezeigte Woche ist also immer die
+laufende. (In den Integrationstests ist die Uhr auf den 19.03.2025 gepinnt.) Durch Klick auf eine Vorstellung gelangt
+man zum Kartenverkauf. Dieser umfasst folgende Funktionen:
 
 - Anzeige der gewählten Vorstellung
 - Angabe der gewünschten Anzahl von Kinokarten
