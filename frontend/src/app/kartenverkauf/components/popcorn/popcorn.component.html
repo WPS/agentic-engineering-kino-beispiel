@@ -1,0 +1,107 @@
+<div class="card card-border m-4 shadow-md bg-gray-50">
+  <div class="card-body">
+
+    <!-- Einladender Kopf (immer sichtbar) -->
+    <div class="flex items-start gap-3">
+      <div class="text-4xl leading-none" aria-hidden="true">🍿</div>
+      <div class="flex-1">
+        <div class="card-title text-lg">Lust auf frisches Popcorn?</div>
+        <p class="text-sm opacity-70 mt-1">
+          Frisch gemacht schmeckt es im Kino einfach am besten – ganz so, wie Sie es mögen.
+        </p>
+      </div>
+    </div>
+
+    @if (!hasPopcorn()) {
+      <!-- Leerzustand: sanfter Anstoß, leicht zu überspringen -->
+      <div class="flex flex-col gap-3 mt-4">
+        <button class="btn btn-accent flex items-center justify-between w-full" (click)="addSuggested()">
+          <span class="inline-flex items-center gap-2"><span aria-hidden="true">🍿</span> Beliebt: {{ empfehlungLabel() }}</span>
+          <span class="font-semibold">+ {{ empfehlungPreis() | geldbetrag }} EUR</span>
+        </button>
+        <button class="btn btn-ghost btn-sm" (click)="addCustom()">Selbst zusammenstellen</button>
+        <p class="text-xs opacity-50 text-center">Kein Popcorn? Kein Problem – einfach weiter zur Zahlung.</p>
+      </div>
+    } @else {
+      <!-- Aktiv: Portionen konfigurieren -->
+      <div class="flex flex-col gap-3 mt-4">
+
+        @for (portion of portionen(); track portion.id) {
+          <div class="rounded-box bg-white/70 border border-base-200 p-3 flex flex-col gap-3">
+
+            <div class="flex items-center justify-between">
+              <span class="text-[13px] font-medium opacity-70">Portion {{ $index + 1 }}</span>
+              <button class="btn btn-ghost btn-xs btn-circle opacity-50" title="Portion entfernen"
+                      (click)="remove(portion.id)">✕
+              </button>
+            </div>
+
+            <!-- Größe -->
+            <div>
+              <p class="text-xs opacity-60 mb-1">Größe</p>
+              <div class="join flex w-full">
+                <button class="join-item btn btn-sm flex-1 h-auto py-1.5"
+                        [class.btn-accent]="istGroesse(portion, 'Klein')"
+                        [class.btn-ghost]="!istGroesse(portion, 'Klein')"
+                        (click)="setGroesse(portion.id, 'Klein')">
+                  Klein<br><span class="opacity-70 text-[11px]">3 €</span>
+                </button>
+                <button class="join-item btn btn-sm flex-1 h-auto py-1.5"
+                        [class.btn-accent]="istGroesse(portion, 'Mittel')"
+                        [class.btn-ghost]="!istGroesse(portion, 'Mittel')"
+                        (click)="setGroesse(portion.id, 'Mittel')">
+                  Mittel<br><span class="opacity-70 text-[11px]">5 €</span>
+                </button>
+                <button class="join-item btn btn-sm flex-1 h-auto py-1.5"
+                        [class.btn-accent]="istGroesse(portion, 'Groß')"
+                        [class.btn-ghost]="!istGroesse(portion, 'Groß')"
+                        (click)="setGroesse(portion.id, 'Groß')">
+                  Groß<br><span class="opacity-70 text-[11px]">7 €</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Geschmack -->
+            <div>
+              <p class="text-xs opacity-60 mb-1">Geschmack</p>
+              <div class="flex flex-row flex-wrap gap-4">
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="radio" [name]="'flavor-' + portion.id" class="radio radio-sm radio-accent"
+                         [checked]="portion.geschmack === 'salzig'" (change)="setGeschmack(portion.id, 'salzig')">
+                  <span>salzig</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="radio" [name]="'flavor-' + portion.id" class="radio radio-sm radio-accent"
+                         [checked]="portion.geschmack === 'süß'" (change)="setGeschmack(portion.id, 'süß')">
+                  <span>süß</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="radio" [name]="'flavor-' + portion.id" class="radio radio-sm radio-accent"
+                         [checked]="portion.geschmack === 'gemischt'" (change)="setGeschmack(portion.id, 'gemischt')">
+                  <span>gemischt</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Zeilensumme -->
+            <div class="flex items-center justify-end">
+              <span class="font-semibold">{{ portionPreis(portion) | geldbetrag }} EUR</span>
+            </div>
+          </div>
+        }
+
+        <button class="btn btn-accent btn-soft btn-sm w-full" (click)="addCustom()">
+          + Weitere Portion hinzufügen
+        </button>
+
+        <div class="flex items-center justify-between pt-1">
+          <span class="text-sm opacity-70">Popcorn gesamt</span>
+          <span class="font-semibold">{{ popcornGesamt() | geldbetrag }} EUR</span>
+        </div>
+
+        <button class="btn btn-ghost btn-xs opacity-50 self-center" (click)="clearAll()">Doch kein Popcorn</button>
+      </div>
+    }
+
+  </div>
+</div>
