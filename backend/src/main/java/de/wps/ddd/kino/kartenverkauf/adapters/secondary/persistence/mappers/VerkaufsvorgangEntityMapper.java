@@ -3,6 +3,9 @@ package de.wps.ddd.kino.kartenverkauf.adapters.secondary.persistence.mappers;
 import de.wps.ddd.kino.kartenverkauf.adapters.secondary.persistence.model.VerkaufsvorgangEntity;
 import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Auftragsnummer;
 import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Geldbetrag;
+import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.PopcornGeschmack;
+import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.PopcornGroesse;
+import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.PopcornPortion;
 import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Popcornbestellung;
 import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Verkaufsvorgang;
 import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Verkaufsvorgangstatus;
@@ -27,11 +30,16 @@ public class VerkaufsvorgangEntityMapper {
                 .map(platzId -> new VerkaufsvorgangEntity.PlatzEmbeddable(
                         platzId.reihe().nummer(), platzId.platz().nummer()))
                 .toList();
+        var popcornPortionen = verkaufsvorgang.getPopcornbestellung().portionen().stream()
+                .map(portion -> new VerkaufsvorgangEntity.PopcornPortionEmbeddable(
+                        portion.groesse().name(), portion.geschmack().name()))
+                .toList();
         return new VerkaufsvorgangEntity(
                 verkaufsvorgang.getAuftragsnummer().nummer(),
                 verkaufsvorgang.getVorstellungId().uuid(),
                 new ArrayList<>(plaetze),
                 verkaufsvorgang.getGesamtpreis().getBetrag(),
+                new ArrayList<>(popcornPortionen),
                 toEntity(verkaufsvorgang.zahlungsvorgang().orElse(null)),
                 verkaufsvorgang.getAnlaeufe(),
                 verkaufsvorgang.getStatus().name()
@@ -42,12 +50,17 @@ public class VerkaufsvorgangEntityMapper {
         var plaetze = verkaufsvorgangEntity.getPlaetze().stream()
                 .map(platz -> new PlatzId(new ReiheNummer(platz.getReihe()), new PlatzNummer(platz.getPlatz())))
                 .toList();
+        List<PopcornPortion> popcornPortionen = verkaufsvorgangEntity.getPopcornPortionen().stream()
+                .map(portion -> new PopcornPortion(
+                        PopcornGroesse.valueOf(portion.getGroesse()),
+                        PopcornGeschmack.valueOf(portion.getGeschmack())))
+                .toList();
         return new Verkaufsvorgang(
                 new Auftragsnummer(verkaufsvorgangEntity.getAuftragsnummer()),
                 new VorstellungId(verkaufsvorgangEntity.getVorstellungId()),
                 new ZusammenhaengendePlaetze(plaetze),
                 Geldbetrag.euroInCent(verkaufsvorgangEntity.getGesamtpreisInCent()),
-                Popcornbestellung.leer(),
+                new Popcornbestellung(popcornPortionen),
                 toDomain(verkaufsvorgangEntity.getZahlungsvorgang()),
                 verkaufsvorgangEntity.getAnlaeufe(),
                 Verkaufsvorgangstatus.valueOf(verkaufsvorgangEntity.getStatus())
