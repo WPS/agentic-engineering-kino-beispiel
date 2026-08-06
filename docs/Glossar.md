@@ -6,7 +6,7 @@ Die Begriffsdefinitionen können sich je Subdomäne unterscheiden.
 
 | Begriff          | Definition                                                                              |
 |------------------|-----------------------------------------------------------------------------------------|
-| **Film**         | Ein Kinofilm, der ins Programm aufgenommen und gezeigt werden kann.                     |
+| **Film :-)**     | Ein Kinofilm, der ins Programm aufgenommen und gezeigt werden kann.                     |
 | **Kinoprogramm** | Übersicht, welche Filme an welchen Tagen zu welchen Zeiten gezeigt werden.              |
 | **Saal**         | Ein Vorführraum im Kino, in dem Filme gezeigt werden.                                   |
 | **Vorstellung**  | Eine konkrete Aufführung eines Films zu einer bestimmten Zeit in einem bestimmten Saal. |
