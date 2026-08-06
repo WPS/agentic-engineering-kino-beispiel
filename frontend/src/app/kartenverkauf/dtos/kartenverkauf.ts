@@ -44,9 +44,48 @@ export interface Preisanfrage {
   plaetze: ZusammenhaengendePlaetze,
 }
 
+// --- Popcorn ---
+
+export type PopcornGroesse = 'Klein' | 'Mittel' | 'Groß';
+export type PopcornGeschmack = 'salzig' | 'süß' | 'gemischt';
+
+// Eine Portion im UI (Menge ist implizit 1 – mehr Popcorn = weitere Portion).
+export interface PopcornPortion {
+  id: number,
+  groesse: PopcornGroesse,
+  geschmack: PopcornGeschmack,
+}
+
+// Preis je Größe in Cent (passend zum Geldbetrag der Domäne).
+export const POPCORN_GROESSE_PREIS: Record<PopcornGroesse, number> = {
+  Klein: 300,
+  Mittel: 500,
+  'Groß': 700,
+};
+
+// Mapping der UI-Labels auf die Backend-Enum-Namen.
+export const POPCORN_GROESSE_ENUM: Record<PopcornGroesse, string> = {
+  Klein: 'KLEIN',
+  Mittel: 'MITTEL',
+  'Groß': 'GROSS',
+};
+
+export const POPCORN_GESCHMACK_ENUM: Record<PopcornGeschmack, string> = {
+  salzig: 'SALZIG',
+  'süß': 'SUESS',
+  gemischt: 'GEMISCHT',
+};
+
+// Drahtformat einer Portion für POST …/verkaufsvorgaenge.
+export interface PopcornPortionDto {
+  groesse: string,
+  geschmack: string,
+}
+
 export interface Kartenbestellung {
   vorstellungId: string,
   plaetze: ZusammenhaengendePlaetze,
+  popcorn: PopcornPortionDto[],
 }
 
 export interface Verkaufsvorgang {
