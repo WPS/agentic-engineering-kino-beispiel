@@ -26,11 +26,19 @@
                       (onPlatzwahlBestaetigt)="plaetzeGewaehlt($event)"
         />
       }
+      @if (zeigePopcorn()) {
+        <app-badge text="Popcorn dazu?" variant="accent" [optional]="true" [showCheckbox]="false"/>
+        <app-popcorn class="w-lg"
+                     (onPopcornGeaendert)="popcornGeaendert($event)"
+        />
+      }
       @if (zeigeZahlungAktiv() || zeigeZahlungFertig()) {
         <app-badge text="Kinokarten zahlen" [checked]="zeigeZahlungFertig()"/>
         <app-zahlung class="w-lg"
                      [vorstellung]="gewaehlteVorstellung()!"
                      [plaetze]="gewaehltePlaetze()!"
+                     [popcornPortionen]="popcornPortionen()"
+                     [popcornGesamt]="popcornGesamt()"
                      (onZahlungBestaetigt)="zahlungBestaetigt($event)"
         />
       }

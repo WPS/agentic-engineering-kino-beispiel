@@ -9,10 +9,23 @@
       <p class="italic">Zahlung wird verarbeitet …</p>
       <div class="loading loading-dots loading-md"></div>
     } @else {
-      <p class="italic">Zu zahlender Betrag:</p>
       @if (gesamtbetrag(); as g) {
+        @if (hasPopcorn()) {
+          <div class="w-full max-w-xs flex flex-col gap-1 text-sm mb-1">
+            <div class="flex justify-between">
+              <span class="opacity-70">Kinokarten ({{ anzahlKinokarten() }})</span>
+              <span>{{ g.betrag | geldbetrag }} {{ g.waehrung }}</span>
+            </div>
+            <div class="flex justify-between">
+              <span class="opacity-70">Popcorn</span>
+              <span>{{ popcornGesamt() | geldbetrag }} {{ g.waehrung }}</span>
+            </div>
+            <div class="border-t border-base-300 my-1"></div>
+          </div>
+        }
+        <p class="italic">Zu zahlender Betrag:</p>
         <p class="card-title">
-          {{ g.betrag | geldbetrag }} {{ g.waehrung }}
+          {{ zuZahlenderBetrag() | geldbetrag }} {{ g.waehrung }}
         </p>
         @if (abgebrochen()) {
           <p class="text-error">
