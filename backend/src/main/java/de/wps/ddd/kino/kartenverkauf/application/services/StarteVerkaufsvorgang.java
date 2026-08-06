@@ -1,5 +1,6 @@
 package de.wps.ddd.kino.kartenverkauf.application.services;
 
+import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Popcornbestellung;
 import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Verkaufsvorgang;
 import de.wps.ddd.kino.kartenverkauf.application.domain.sitzplatzvergabe.ZusammenhaengendePlaetze;
 import de.wps.ddd.kino.kartenverkauf.application.domain.vorstellungen.VorstellungId;
@@ -18,10 +19,12 @@ class StarteVerkaufsvorgang implements de.wps.ddd.kino.kartenverkauf.application
     private final BerechneGesamtpreis berechneGesamtpreis;
 
     @Override
-    public Verkaufsvorgang fuer(VorstellungId vorstellungId, ZusammenhaengendePlaetze gewaehltePlaetze) {
-        var gesamtpreis = berechneGesamtpreis.fuer(vorstellungId, gewaehltePlaetze);
+    public Verkaufsvorgang fuer(VorstellungId vorstellungId, ZusammenhaengendePlaetze gewaehltePlaetze,
+                                Popcornbestellung popcornbestellung) {
+        var kartenpreis = berechneGesamtpreis.fuer(vorstellungId, gewaehltePlaetze);
+        var gesamtpreis = kartenpreis.plus(popcornbestellung.gesamtpreis());
 
-        var verkaufsvorgang = Verkaufsvorgang.starte(vorstellungId, gewaehltePlaetze, gesamtpreis);
+        var verkaufsvorgang = Verkaufsvorgang.starte(vorstellungId, gewaehltePlaetze, gesamtpreis, popcornbestellung);
         verkaufsvorgaenge.speichere(verkaufsvorgang);
         // TODO
         // Plätze im Saalplan blocken, damit sie nicht doppelt verkauft werden

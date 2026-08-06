@@ -1,6 +1,7 @@
 package de.wps.ddd.kino.kartenverkauf.adapters.primary.web.controllers;
 
 import de.wps.ddd.kino.kartenverkauf.adapters.primary.web.mappers.KartenDtoMapper;
+import de.wps.ddd.kino.kartenverkauf.adapters.primary.web.mappers.PopcornDtoMapper;
 import de.wps.ddd.kino.kartenverkauf.adapters.primary.web.mappers.SaalplanDtoMapper;
 import de.wps.ddd.kino.kartenverkauf.adapters.primary.web.mappers.VorstellungDtoMapper;
 import de.wps.ddd.kino.kartenverkauf.adapters.primary.web.mappers.ZahlungDtoMapper;
@@ -51,6 +52,7 @@ class KartenverkaufController {
     private final SaalplanDtoMapper saalplanMapper;
     private final ZahlungDtoMapper zahlungMapper;
     private final KartenDtoMapper kartenMapper;
+    private final PopcornDtoMapper popcornMapper;
 
     private final HoleGewaehlteVorstellung holeGewaehlteVorstellung;
     private final HoleSaalplan holeSaalplan;
@@ -92,8 +94,9 @@ class KartenverkaufController {
     public ResponseEntity<VerkaufsvorgangDto> starteVerkaufsvorgang(@RequestBody KartenbestellungDto bestellung) {
         var vorstellungId = new VorstellungId(bestellung.vorstellungId());
         var gewaehltePlaetze = saalplanMapper.toDomain(bestellung.plaetze());
+        var popcornbestellung = popcornMapper.toDomain(bestellung.popcorn());
 
-        var verkaufsvorgang = starteVerkaufsvorgang.fuer(vorstellungId, gewaehltePlaetze);
+        var verkaufsvorgang = starteVerkaufsvorgang.fuer(vorstellungId, gewaehltePlaetze, popcornbestellung);
 
         var dto = zahlungMapper.toDto(verkaufsvorgang);
         var ort = UriComponentsBuilder.fromPath("/api/kartenverkauf/verkaufsvorgaenge/{auftragsnummer}")

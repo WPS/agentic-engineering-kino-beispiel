@@ -4,6 +4,11 @@ import de.wps.ddd.kino.IntegrationTestMitWochenplan;
 import de.wps.ddd.kino.common.error.GeschaeftsregelVerletzt;
 import de.wps.ddd.kino.common.error.RessourceNichtGefunden;
 import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Auftragsnummer;
+import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Geldbetrag;
+import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.PopcornGeschmack;
+import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.PopcornGroesse;
+import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.PopcornPortion;
+import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Popcornbestellung;
 import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Verkaufsvorgangstatus;
 import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Zahlungsstatus;
 import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Zahlungsvorgang;
@@ -63,13 +68,13 @@ class ZahlungsvorgangIntegrationTest extends IntegrationTestMitWochenplan {
     }
 
     private Auftragsnummer laufenderVorgang() {
-        return starteVerkaufsvorgang.fuer(vorstellungId(), plaetze).getAuftragsnummer();
+        return starteVerkaufsvorgang.fuer(vorstellungId(), plaetze, Popcornbestellung.leer()).getAuftragsnummer();
     }
 
     @Test
     void starteVerkaufsvorgang_ermitteltDenPreisSelbstUndLegtNochKeinenZahlungsvorgangAn() {
         // act
-        var verkaufsvorgang = starteVerkaufsvorgang.fuer(vorstellungId(), plaetze);
+        var verkaufsvorgang = starteVerkaufsvorgang.fuer(vorstellungId(), plaetze, Popcornbestellung.leer());
 
         // assert
         assertThat(verkaufsvorgang.getGesamtpreis().getBetrag()).isPositive();
@@ -79,6 +84,23 @@ class ZahlungsvorgangIntegrationTest extends IntegrationTestMitWochenplan {
         assertThatThrownBy(() -> holeZahlungsstatus.fuer(verkaufsvorgang.getAuftragsnummer()))
                 .isInstanceOf(RessourceNichtGefunden.class)
                 .hasMessageContaining("noch keinen Zahlungsvorgang");
+    }
+
+    @Test
+    void starteVerkaufsvorgang_mitPopcorn_schreibtKartenpreisPlusPopcornFest() {
+        // arrange
+        var bestellung = new Popcornbestellung(List.of(
+                new PopcornPortion(PopcornGroesse.MITTEL, PopcornGeschmack.GEMISCHT)));
+        var kartenpreis = starteVerkaufsvorgang.fuer(vorstellungId(), plaetze, Popcornbestellung.leer())
+                .getGesamtpreis();
+
+        // act
+        var verkaufsvorgang = starteVerkaufsvorgang.fuer(vorstellungId(), plaetze, bestellung);
+
+        // assert
+        assertThat(verkaufsvorgang.getGesamtpreis()).isEqualTo(kartenpreis.plus(Geldbetrag.euro(5, 0)));
+        assertThat(verkaufsvorgaenge.hole(verkaufsvorgang.getAuftragsnummer()).getPopcornbestellung())
+                .isEqualTo(bestellung);
     }
 
     @Test
