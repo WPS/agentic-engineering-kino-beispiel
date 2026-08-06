@@ -3,6 +3,7 @@ package de.wps.ddd.kino.kartenverkauf.adapters.secondary.persistence.mappers;
 import de.wps.ddd.kino.kartenverkauf.adapters.secondary.persistence.model.VerkaufsvorgangEntity;
 import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Auftragsnummer;
 import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Geldbetrag;
+import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Popcornbestellung;
 import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Verkaufsvorgang;
 import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Verkaufsvorgangstatus;
 import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Zahlungsstatus;
@@ -46,6 +47,7 @@ public class VerkaufsvorgangEntityMapper {
                 new VorstellungId(verkaufsvorgangEntity.getVorstellungId()),
                 new ZusammenhaengendePlaetze(plaetze),
                 Geldbetrag.euroInCent(verkaufsvorgangEntity.getGesamtpreisInCent()),
+                Popcornbestellung.leer(),
                 toDomain(verkaufsvorgangEntity.getZahlungsvorgang()),
                 verkaufsvorgangEntity.getAnlaeufe(),
                 Verkaufsvorgangstatus.valueOf(verkaufsvorgangEntity.getStatus())

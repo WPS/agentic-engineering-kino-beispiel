@@ -4,6 +4,7 @@ import de.wps.ddd.kino.kartenverkauf.adapters.primary.web.mappers.SaalplanDtoMap
 import de.wps.ddd.kino.kartenverkauf.adapters.primary.web.mappers.ZahlungDtoMapper;
 import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Auftragsnummer;
 import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Geldbetrag;
+import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Popcornbestellung;
 import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Verkaufsvorgang;
 import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Verkaufsvorgangstatus;
 import de.wps.ddd.kino.kartenverkauf.application.domain.sitzplatzvergabe.PlatzId;
@@ -31,6 +32,7 @@ class ZahlungDtoMapperTest {
                 new VorstellungId(UUID.fromString("090c173a-3636-4980-865a-1ec859eb4f90")),
                 new ZusammenhaengendePlaetze(List.of(new PlatzId(new ReiheNummer(4), new PlatzNummer(1)))),
                 Geldbetrag.euro(12, 50),
+                Popcornbestellung.leer(),
                 null,
                 0,
                 Verkaufsvorgangstatus.Laufend);

@@ -4,6 +4,7 @@ import de.wps.ddd.kino.kartenverkauf.adapters.secondary.persistence.mappers.Verk
 import de.wps.ddd.kino.kartenverkauf.adapters.secondary.persistence.model.VerkaufsvorgangEntity;
 import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Auftragsnummer;
 import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Geldbetrag;
+import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Popcornbestellung;
 import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Verkaufsvorgang;
 import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Verkaufsvorgangstatus;
 import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Zahlungsstatus;
@@ -38,6 +39,7 @@ class VerkaufsvorgangEntityMapperTest {
         var verkaufsvorgang = new Verkaufsvorgang(auftragsnummer, vorstellungId,
                 new ZusammenhaengendePlaetze(List.of(platzId(4, 1), platzId(4, 2))),
                 Geldbetrag.euro(25, 0),
+                Popcornbestellung.leer(),
                 new Zahlungsvorgang(zahlungsvorgangId, 2, Geldbetrag.euro(25, 0), Zahlungsstatus.Eingegangen),
                 2, Verkaufsvorgangstatus.Abgeschlossen);
 

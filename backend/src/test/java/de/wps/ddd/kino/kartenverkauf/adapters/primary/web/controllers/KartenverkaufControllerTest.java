@@ -9,6 +9,7 @@ import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Auftragsnu
 import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Geldbetrag;
 import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Kinokarte;
 import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.KinokarteId;
+import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Popcornbestellung;
 import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Verkaufsvorgang;
 import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Verkaufsvorgangstatus;
 import de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Zahlungsstatus;
@@ -231,6 +232,7 @@ class KartenverkaufControllerTest {
                 new VorstellungId(VORSTELLUNG_ID),
                 new ZusammenhaengendePlaetze(List.of(new PlatzId(new ReiheNummer(4), new PlatzNummer(1)))),
                 Geldbetrag.euro(50, 0),
+                Popcornbestellung.leer(),
                 null,
                 0,
                 de.wps.ddd.kino.kartenverkauf.application.domain.kartenverkauf.Verkaufsvorgangstatus.Laufend);

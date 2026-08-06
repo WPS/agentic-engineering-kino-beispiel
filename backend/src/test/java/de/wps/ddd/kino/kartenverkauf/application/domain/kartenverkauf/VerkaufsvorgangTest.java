@@ -33,6 +33,36 @@ class VerkaufsvorgangTest {
     }
 
     @Test
+    void starte_ohnePopcorn_hatLeereBestellung() {
+        // act
+        var verkaufsvorgang = starte();
+
+        // assert
+        assertThat(verkaufsvorgang.getPopcornbestellung().istLeer()).isTrue();
+        assertThat(verkaufsvorgang.popcornpreis()).isEqualTo(Geldbetrag.euroInCent(0));
+    }
+
+    @Test
+    void starte_mitPopcorn_merktBestellungUndPreis() {
+        // arrange
+        var bestellung = new Popcornbestellung(List.of(
+                new PopcornPortion(PopcornGroesse.MITTEL, PopcornGeschmack.GEMISCHT),
+                new PopcornPortion(PopcornGroesse.KLEIN, PopcornGeschmack.SALZIG)
+        ));
+
+        // act
+        var verkaufsvorgang = Verkaufsvorgang.starte(
+                new VorstellungId(UUID.randomUUID()),
+                new ZusammenhaengendePlaetze(List.of(new PlatzId(new ReiheNummer(4), new PlatzNummer(1)))),
+                Geldbetrag.euro(33, 0),
+                bestellung);
+
+        // assert
+        assertThat(verkaufsvorgang.getPopcornbestellung()).isEqualTo(bestellung);
+        assertThat(verkaufsvorgang.popcornpreis()).isEqualTo(Geldbetrag.euro(8, 0));
+    }
+
+    @Test
     void starteZahlungsvorgang_ersterZahlungsvorgang_ueberDenGesamtpreis() {
         // arrange
         var verkaufsvorgang = starte();

@@ -20,6 +20,7 @@ public class Verkaufsvorgang {
     private final VorstellungId vorstellungId;
     private final ZusammenhaengendePlaetze gewaehltePlaetze;
     private final Geldbetrag gesamtpreis;
+    private final Popcornbestellung popcornbestellung;
 
     @Getter(AccessLevel.NONE)
     private Zahlungsvorgang zahlungsvorgang;
@@ -28,11 +29,13 @@ public class Verkaufsvorgang {
 
     public Verkaufsvorgang(Auftragsnummer auftragsnummer, VorstellungId vorstellungId,
                            ZusammenhaengendePlaetze gewaehltePlaetze, Geldbetrag gesamtpreis,
+                           Popcornbestellung popcornbestellung,
                            Zahlungsvorgang zahlungsvorgang, int anlaeufe, Verkaufsvorgangstatus status) {
         this.auftragsnummer = auftragsnummer;
         this.vorstellungId = vorstellungId;
         this.gewaehltePlaetze = gewaehltePlaetze;
         this.gesamtpreis = gesamtpreis;
+        this.popcornbestellung = popcornbestellung;
         this.zahlungsvorgang = zahlungsvorgang;
         this.anlaeufe = anlaeufe;
         this.status = status;
@@ -40,9 +43,20 @@ public class Verkaufsvorgang {
 
     public static Verkaufsvorgang starte(VorstellungId vorstellungId,
                                          ZusammenhaengendePlaetze gewaehltePlaetze,
-                                         Geldbetrag gesamtpreis) {
+                                         Geldbetrag gesamtpreis,
+                                         Popcornbestellung popcornbestellung) {
         return new Verkaufsvorgang(Auftragsnummer.neueAuftragsnummer(), vorstellungId, gewaehltePlaetze,
-                gesamtpreis, null, 0, Verkaufsvorgangstatus.Laufend);
+                gesamtpreis, popcornbestellung, null, 0, Verkaufsvorgangstatus.Laufend);
+    }
+
+    public static Verkaufsvorgang starte(VorstellungId vorstellungId,
+                                         ZusammenhaengendePlaetze gewaehltePlaetze,
+                                         Geldbetrag gesamtpreis) {
+        return starte(vorstellungId, gewaehltePlaetze, gesamtpreis, Popcornbestellung.leer());
+    }
+
+    public Geldbetrag popcornpreis() {
+        return popcornbestellung.gesamtpreis();
     }
 
     public Zahlungsvorgang starteZahlungsvorgang() {
