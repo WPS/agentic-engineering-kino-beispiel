@@ -29,11 +29,15 @@ FROM eclipse-temurin:25-jre
 WORKDIR /app
 COPY --from=build /workspace/target/*.jar app.jar
 
-# Als nicht-privilegierten Nutzer laufen (kein root im Container). Das JAR wird
-# nur gelesen; die H2-DB liegt in-memory, daher werden keine beschreibbaren
-# Verzeichnisse benoetigt. Port 8080 ist unprivilegiert (>1024).
+# Als nicht-privilegierten Nutzer laufen (kein root im Container). Die H2-DB-Datei
+# (./data, siehe spring.datasource.url) und das Log-File (./logs, siehe
+# logging.file.name) liegen relativ zum Arbeitsverzeichnis - dafuer braucht
+# "spring" Schreibrechte auf /app, sonst schlaegt der Start mit
+# AccessDeniedException fehl. Port 8080 ist unprivilegiert (>1024).
 RUN groupadd --system spring \
- && useradd --system --gid spring --no-create-home spring
+ && useradd --system --gid spring --no-create-home spring \
+ && mkdir -p /app/data /app/logs \
+ && chown -R spring:spring /app
 USER spring:spring
 
 EXPOSE 8080
