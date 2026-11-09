@@ -2,7 +2,9 @@
 Jede Übung trainiert eine Technik, die ihr in jedes andere Projekt mitnehmen könnt. Mit jeder Übung wächst euer **Werkzeugkasten** um ein Stück:
 eine AGENTS.md, Skills, Subagents, Hooks, Vorlagen.
 
-Musterlösungen und Erklärungen zu den Artefakten (Trainer-Material): [`Artefakte/`](Artefakte/).
+Musterlösungen und Erklärungen zu den Artefakten (Trainer-Material) liegen in der **`Artefakte.zip`**, die ihr vom Trainer bekommt.
+Entpackt sie außerhalb des Repos: `unzip Artefakte.zip -d ~/kino-artefakte`. Darin gibt es je Übung einen Ordner
+`~/kino-artefakte/Artefakte/Uebung-N/` mit einer `README.md`; die Befehle in den READMEs nehmen diesen Pfad an.
 
 | Übung                                                     | Ihr lernt | Baut auf | Ihr baut |
 |-----------------------------------------------------------|---|---|---|
@@ -14,7 +16,8 @@ Musterlösungen und Erklärungen zu den Artefakten (Trainer-Material): [`Artefak
 
 ## Spielregeln
 - **Am Ende jeder Übung committen.** Wer nicht fertig wird, steigt mit dem Stand-Branch des Trainers in die
-  nächste Übung ein (`stand/uebung-1` bis `stand/uebung-3`; für Übung 4 und 5 `feature/popcorn-upsell`, dort fehlen Spec und ADR).
+  nächste Übung ein (`stand/uebung-1` bis `stand/uebung-3`; für Übung 4 und 5 mit `popcorn-upsell.patch` vom Collaboard, dort fehlen Spec und ADR –
+  Anleitung: [Übung 5, Fallback](#fallback-popcorn-stand-einspielen-nur-wenn-ü4-fehlt)).
 - **Nicht raten lassen, wo ihr es wisst.** Aber in Übung 1 und 2 *bewusst* raten lassen – genau das wollen wir sehen.
 
 ## Setup des Werkzeugkastens (einmalig)
@@ -47,7 +50,7 @@ Ergebnis ist „ich weiß, wo der Agent geraten hat“, nicht „das Feature lä
 **Rahmen:** 45 min inkl. Besprechung · Sonnet-Klasse, Effort medium · Ausgangspunkt `main`, frisch gezogen.
 
 **Ihr nehmt mit:** `AGENTS.md` (auf `main`), ausgefüllte Annahmen-Tabelle, den Audit-Prompt (wird in Ü2 zum Skill).
-**Nicht fertig?** Fallback und Musterstand: [Artefakte/Uebung-1](Artefakte/Uebung-1/README.md).
+**Nicht fertig?** Fallback und Musterstand: `Artefakte.zip` → `Uebung-1/README.md`.
 
 ### Kernpfad
 **1. AGENTS.md prüfen.** Sie ist in Kapitel 7 entstanden. Gegenlesen und auf `main` committen.  
@@ -79,7 +82,7 @@ claude  # claude oder andere Tool starten
 ```
 
 ✓ **Check:** `git worktree list`. Läuft die App im Hauptordner noch, doppelt belegte Ports beachten.
-Alle Handgriffe und Stolpersteine: [Worktree-Kommandokarte](Artefakte/Uebung-1/worktree-kommandokarte.md).
+Alle Handgriffe und Stolpersteine: Worktree-Kommandokarte (`Artefakte.zip` → `Uebung-1/worktree-kommandokarte.md`).
 
 **3. Bewusst knapper Auftrag.** Kein Plan-Modus, keine Zusatzinfos – der Agent darf raten:
 
@@ -145,7 +148,7 @@ Ausgangspunkt: `main` mit Ergebnis aus Ü1.
 
 **Ihr nehmt mit:** `.agents/skills/annahmen-audit/`, `.agents/skills/vor-der-umsetzung/` (mit `references/`),
 `.agents/agents/umsetzer.md`, Antworten auf den Selbstcheck.
-**Nicht fertig?** Fallback und Musterstand: [Artefakte/Uebung-2](Artefakte/Uebung-2/README.md).
+**Nicht fertig?** Fallback und Musterstand: `Artefakte.zip` → `Uebung-2/README.md`.
 
 ### Kernpfad
 **0. Skills sichtbar machen** (einmalig, siehe Setup): `.agents/skills` existiert, `.claude/skills` verweist darauf.
@@ -241,14 +244,14 @@ Nach dem zweiten Lauf kurz im Plenum beantworten:
 
 # Übung 3 – Rüstzeug: Harness, Klärung, Mockup
 **Ihr lernt:** Regeln, die *abbrechen* statt bitten (Hooks mit exit 2, Deny-Regeln); einen Guard, der sagt, warum
-er blockiert; das eigene Harness gegen Kontext-Kontamination einzusetzen; eine Anforderung per Interview zu
+er blockiert; eine Anforderung per Interview zu
 klären und ein Mockup als Klärungswerkzeug zu nutzen – alles, bevor Code entsteht.
 
 **Rahmen:** 60 min inkl. Besprechung · Sonnet-Klasse, Effort medium · Ausgangspunkt: `main` mit Stand aus Ü2 · dieser Übung macht ihr in Paaren. Was hier entsteht, ist der Ausgangsstand für Übung 4.
 
 **Ihr nehmt mit:** `.agents/hooks/quality-gate.sh`, `.claude/settings.json` (Hooks + Deny), Skill `klaeren`,
 `docs/anforderungen/popcorn-klaerung.md`, `docs/mockups/popcorn.html`.
-**Nicht fertig?** Fallback und Musterstand: [Artefakte/Uebung-3](Artefakte/Uebung-3/README.md).
+**Nicht fertig?** Fallback und Musterstand: `Artefakte.zip` → `Uebung-3/README.md`.
 
 ### Teil A – Harness
 
@@ -302,11 +305,7 @@ printf '\n.env\n' >> .gitignore   # .gitignore verhindert den Commit – nicht d
 was passiert? Notiert es.
 
 ### Teil B – Klärung
-**B1. Die Musterlösung aussperren.** Im Repo liegt unter `docs/design_handoff_popcorn_upsell/` ein fertiges Design.
-Damit euer Agent unbeeinflusst klärt, ergänzt ihr eine **temporäre** Deny-Regel:
-`"Read(./docs/design_handoff_popcorn_upsell/**)"`. (Euer Harness schützt hier den Kontext, nicht ein Secret.)
-
-**B2. Skill `klaeren` bauen** – `.agents/skills/klaeren/SKILL.md`, ohne Projektbegriffe:
+**B1. Skill `klaeren` bauen** – `.agents/skills/klaeren/SKILL.md`, ohne Projektbegriffe:
 ```text
 - Noch keinen Code schreiben. Eine Frage nach der anderen, auf die Antwort warten.
 - Nach allem fragen, was sonst angenommen werden müsste – die Kategorien kennt ihr aus Ü1/Ü2.
@@ -316,7 +315,7 @@ Damit euer Agent unbeeinflusst klärt, ergänzt ihr eine **temporäre** Deny-Reg
   **1 Entschieden · 2 Offene Fragen an den Fachbereich · 3 Ist/Soll mit Lücken und Chancen ·
   4 Vertikale Slices, priorisiert nach Business Value, technischem Risiko und Impact.**
 ```
-**B3. Interview im Rollenspiel.** Eine Person bedient den Agenten, die andere ist Fachexperte mit der Karte vom
+**B2. Interview im Rollenspiel.** Eine Person bedient den Agenten, die andere ist Fachexperte mit der Karte vom
 Trainer. Steht etwas nicht auf der Karte, lautet die Antwort: „Wissen wir noch nicht.“
 
 ```text
@@ -334,8 +333,13 @@ docs/mockups/popcorn.html (eine Datei, kein Build, kein Framework).
 Markiere jede offene Frage sichtbar an der Stelle im Ablauf, an der sie auftritt.
 ```
 
-Danach die temporäre Deny-Regel entfernen (von Hand) und euer Mockup mit `docs/design_handoff_popcorn_upsell/`
-vergleichen.
+Erst jetzt holt ihr das fertige Design aus der `Artefakte.zip` (es lag bewusst bis hierhin nur dort, damit die Klärung
+unbeeinflusst bleibt) und vergleicht euer Mockup damit:
+
+```bash
+cp -r ~/kino-artefakte/Artefakte/Uebung-3/design_handoff_popcorn_upsell docs/
+echo 'docs/design_handoff_popcorn_upsell/' >> .git/info/exclude   # bleibt lokal, kein Commit
+```
 
 ✓ **Check:** Das Mockup hat mindestens eine neue Frage oder Entscheidung sichtbar gemacht.
 
@@ -382,8 +386,8 @@ Sitznachbarn zusammen oder Stand-Branch.
 
 **Ihr nehmt mit:** Skills `spezifikation` und `adr` (mit Vorlagen), `specs/popcorn.md`, `docs/adr/0001-*.md`,
 ein Commit mit Slice 1.
-**Nicht fertig?** Fallback und Musterstand: [Artefakte/Uebung-4](Artefakte/Uebung-4/README.md) – die Skills
-zum Kopieren liegen in `Artefakte/Uebung-4/.agents/skills/`.
+**Nicht fertig?** Fallback und Musterstand: `Artefakte.zip` → `Uebung-4/README.md` – die Skills
+zum Kopieren liegen dort in `Uebung-4/.agents/skills/`.
 
 ### Kernpfad
 **1. Zwei Skills in `main` kopieren und durchlesen.** 
@@ -465,8 +469,8 @@ Zum Abschluss kurz im Plenum beantworten – mit Beleg (Zitat, Datei, Testausgab
 das bei Unklarem stoppt, und ein paralleles Review. Dazu, wo AI in jeder Phase trägt und wo sie kippt. Das Feature
 „Getränke kaufen“ ist nur das Vehikel.
 
-**Rahmen:** Sonnet-Klasse, Effort medium · Grundlage: euer Popcorn-Stand aus Ü4 (Fallback: Branch
-`feature/popcorn-upsell`, Spec und ADR übernehmen)
+**Rahmen:** Sonnet-Klasse, Effort medium · Grundlage: euer Popcorn-Stand aus Ü4 (Fallback:
+`popcorn-upsell.patch` einspielen, siehe [Fallback unten](#fallback-popcorn-stand-einspielen-nur-wenn-ü4-fehlt))
 
 **Baut auf:** Skills `klaeren` (Ü3), `spezifikation` (Ü4), `vor-der-umsetzung` und Subagent `umsetzer` (Ü2),
 Stop-Hook aus Ü3.
@@ -476,6 +480,24 @@ Subagent `reviewer`, Workflow.
 
 > **Warum zwei Teile?** Klären ist ein Interview und braucht euch; ein Workflow läuft im Hintergrund und **kann nicht
 > nachfragen**.
+
+### Fallback: Popcorn-Stand einspielen (nur wenn Ü4 fehlt)
+`popcorn-upsell.patch` (vom Trainer) ist ein einzelner Diff gegen `main` (ohne Commit-Historie). Es enthält das Popcorn-Feature, aber keine Spec und kein ADR.
+Aus dem Repo-Hauptordner, mit sauberem Stand auf `main`:
+
+```bash
+git worktree add ../kino-popcorn-fallback -b popcorn-fallback main
+cd ../kino-popcorn-fallback
+git apply --check /pfad/zu/popcorn-upsell.patch   # Trockenlauf: ändert nichts, meldet Konflikte
+git apply /pfad/zu/popcorn-upsell.patch           # Änderungen liegen danach im Arbeitsverzeichnis
+git add -A && git commit -m "Fallback: Popcorn-Stand"
+(cd frontend && npm ci)                           # Abhängigkeiten gibt es pro Worktree
+```
+
+- `git apply` legt **keinen Commit** an – den macht ihr selbst (letzte Zeile).
+- Meldet `--check` einen Fehler („patch does not apply“), steht `main` nicht auf dem Stand des Trainers: `git pull`, dann nochmal.
+- Ohne Worktree geht es auch direkt im Repo: Branch anlegen (`git switch -c popcorn-fallback`), dann dieselben `git apply`-Befehle.
+- Spec und ADR kopiert ihr danach aus der `Artefakte.zip` (`Uebung-4/muster-ergebnisse/`) nach `specs/` bzw. `docs/adr/`.
 
 ### Teil A – Vorbereitung
 **A1. Review-Werkzeuge bereitstellen.** Skills `diff-review`, `testluecken`, `sicherheits-review` und
