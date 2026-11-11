@@ -31,7 +31,7 @@ import java.time.LocalDateTime;
 @Import(FesteZeitTestConfig.class)
 public abstract class IntegrationTestMitWochenplan {
 
-    private static final int ERWARTETE_ANZAHL_VORSTELLUNGEN = 24;
+    private static final int ERWARTETE_ANZAHL_VORSTELLUNGEN = 31;
     private static final LocalDate TAG_MIT_VORSTELLUNGEN = LocalDate.of(2025, 3, 19);
 
     @Autowired

@@ -17,7 +17,7 @@ class ProgrammServiceIntegrationTest extends IntegrationTestMitWochenplan {
     private ProgrammService programmService;
 
     @Test
-    void holeVorstellungenFuerTag_dreiVorstellungenAmTag_liefertFilme() {
+    void holeVorstellungenFuerTag_vierFilmeAmTag_liefertFilme() {
         // arrange
         var datum = LocalDate.parse("2025-03-19");
 
@@ -26,20 +26,24 @@ class ProgrammServiceIntegrationTest extends IntegrationTestMitWochenplan {
 
         // assert
         assertThat(filme).isNotNull();
-        assertThat(filme).hasSize(3);
+        assertThat(filme).hasSize(4);
         var film1 = filme.get(0);
         var film2 = filme.get(1);
         var film3 = filme.get(2);
+        var film4 = filme.get(3);
         assertThat(film1.getTitel()).isEqualTo("Guardians of the Lunacy");
         assertThat(film2.getTitel()).isEqualTo("The Fast and the Curious");
         assertThat(film3.getTitel()).isEqualTo("Clown Wars");
+        assertThat(film4.getTitel()).isEqualTo("Unser neuer Subagent");
         assertThat(film1.getVorstellungen()).hasSize(1);
         assertThat(film2.getVorstellungen()).hasSize(2);
         assertThat(film3.getVorstellungen()).hasSize(1);
+        assertThat(film4.getVorstellungen()).hasSize(1);
         assertThat(film1.getVorstellungen().get(0).getBeginn()).isEqualTo("2025-03-19T14:30:00");
         assertThat(film2.getVorstellungen().get(0).getBeginn()).isEqualTo("2025-03-19T15:00:00");
         assertThat(film2.getVorstellungen().get(1).getBeginn()).isEqualTo("2025-03-19T20:30:00");
         assertThat(film3.getVorstellungen().get(0).getBeginn()).isEqualTo("2025-03-19T22:30:00");
+        assertThat(film4.getVorstellungen().get(0).getBeginn()).isEqualTo("2025-03-19T06:30:00");
     }
 
     @Test
