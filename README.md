@@ -104,6 +104,13 @@ Entwicklung lassen sich Backend (`cd backend && ./mvnw spring-boot:run`, Port 80
 Details zur Datenbank des Backends (dateibasierte H2, Verbindung aus IntelliJ, H2-Konsole) stehen in
 [docs/Datenbank.md](docs/Datenbank.md).
 
+## Schulungsmaterial
+
+- **Übungen:** [`docs/Uebungen`](docs/Uebungen)
+- **Lösungen:** Die Musterlösungen der Übungen (`Uebungen-Artefakte.zip`) und der Feature-Branch
+  `popcorn-upsell` (als `popcorn-upsell.patch`) sind nicht Teil dieses Repositories. Sie werden von den
+  Trainer:innen in der Schulung bereitgestellt.
+
 ## Technologien
 
 Das Backend basiert u.a. auf folgenden Technologien:

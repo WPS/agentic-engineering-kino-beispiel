@@ -59,8 +59,11 @@ stages:
     - "curl -v --fail-with-body $DEPENDENCY_TRACK_API_URL
         -H \"Content-Type: multipart/form-data\"
         -H \"X-API-Key: $DEPENDENCY_TRACK_API_KEY\"
-        -F \"projectName=$DEPENDENCY_TRACK_PROJECT_NAME\"
-        -F \"projectVersion=$DEPENDENCY_TRACK_PROJECT_VERSION\"
+        -F \"projectName=AgenticEngineering-Schulung-WPS-Kino\"
+        -F \"projectVersion=1\"
+        -F \"autoCreate=true\"
+        -F \"parentName=$DEPENDENCY_TRACK_PARENT_PROJECT_NAME\"
+        -F \"parentVersion=$DEPENDENCY_TRACK_PARENT_PROJECT_VERSION\"
         -F \"bom=@bom.json\""
 
 build:backend:
