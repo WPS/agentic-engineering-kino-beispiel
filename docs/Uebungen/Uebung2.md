@@ -16,7 +16,8 @@ eigenen Rechten zu delegieren.
 **2.0 Skills sichtbar machen** (einmalig, nur für claude Anwender, die in der `.agents` arbeiten wollen): `.agents/skills` existiert, `.claude/skills` verweist darauf.
 
 ```bash
-mkdir -p .claude
+mkdir -p .agents/skills
+mkdir -p .claude/skills
 ln -s ../.agents/skills .claude/skills  # erzeugt symlink in .claude/skills  
 ```
 

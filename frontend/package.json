@@ -35,7 +35,7 @@
     "@angular/localize": "^21.2.26",
     "@cyclonedx/cyclonedx-npm": "^7.0.0",
     "jsdom": "^29.1.1",
-    "postcss": "^8.5.15",
+    "postcss": "^8.5.32",
     "typescript": "~5.9.3",
     "vitest": "^4.1.7"
   }

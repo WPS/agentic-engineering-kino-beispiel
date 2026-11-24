@@ -1,6 +1,6 @@
 # Übung 4 – Spezifikation als Hebel
 
-**Nicht fertig mit Ü3?** Kein Problem. In dieser Übung erstellen wir neue Skills und brauchen die vorherigen nicht.
+**Nicht fertig mit Ü3?** Kein Problem. Eine fertige popcorn-klaerung.md findet ihr unter `Uebungen-Artefakte\Uebung-3\muster-ergebnisse` in der`Uebungen-Artefakte.zip`.
 
 **Ihr lernt:** Eine gute Spezifikation definiert die Akzeptanzkritieren und vermeidet mehrere ungewollte Schleifen und
 eine Architekturentscheidung als ADR verhindert eine erneute Diskussion.
@@ -11,13 +11,7 @@ eine Architekturentscheidung als ADR verhindert eine erneute Diskussion.
 
 ### Vorgehen
 
-**4.1. Skills** `/spezifikation` und `/adr` aus `Uebungen-Artefakte.zip` → `Uebung-4` kopieren.
-
-```bash
-- `.agents/skills/spezifikation/SKILL.md` + `spec-template.md`: aus dem Klärungsdokument wurden Specs generiert
-
-- `.agents/skills/adr/SKILL.md` + `adr-template.md`:
-```
+**4.1. Skills** `/spezifikation` mit `spec-template.md` und `/adr` mit `adr-template.md` aus `Uebungen-Artefakte.zip` → `Uebung-4` kopieren.
 
 **4.2 Worktree anlegen und Modellwahl**
 
@@ -50,12 +44,12 @@ Entscheide nichts, was in der Klärung offen ist.
 /adr Wo lebt die Popcorn-Bestellung fachlich und technisch? Denke mindestens drei Optionen durch,
 darunter eine minimal invasive. Nenne Risiken und Trade-offs, dann eine begründete Entscheidung.
 ```
-- Erfebnis `0001-popcorn-im-verkaufsvorgang.md` durchlesen
+- Ergebnis `0001-popcorn-im-verkaufsvorgang.md` durchlesen
 - Skills und Artefakten committen (Commit-Message: `docs: Spezifikation und ADR Popcorn`).
 
 **4.5 Slice 1 testgetrieben umsetzen.**
 Beispiel-Musterplan: eine Portion mit Preis, Berechnung der Gesamtsumme, bis zur API als Slice 1;
-die Oberfläche wäre Slice 2. Erst im Plan-Modus loslegen und dann der Plan überprüfen.
+die Oberfläche wäre Slice 2. Erst im Plan-Modus loslegen und dann den Plan überprüfen.
 
 Prompt:
 ```text
@@ -69,7 +63,7 @@ Setze Slice 1 aus docs/anforderungen/popcorn-klaerung.md um, gegen specs/popcorn
 _(„Im selben Durchgang“, weil euer Stop-Hook aus Ü3 jedes Anhalten mit rotem Test blockiert.)_
 
 ✓ **Check:** `
-- git log --oneline main..` zeigt zwei Commits (Spec/ADR, Slice 1)   #WARUM 2?????????
+- git log --oneline main..` zeigt zwei Commits (Spec/ADR, Slice 1)
 - `cd backend && ./mvnw verify` ist grün
 - ihr wisst, ob und wie oft der Stop-Hook eingegriffen hat
 
@@ -83,6 +77,5 @@ _(„Im selben Durchgang“, weil euer Stop-Hook aus Ü3 jedes Anhalten mit rote
 
 ### Bonus
 
-- **Set-based Design:** Die zweitbeste Umsetzungsplan aus der ADR-Optionen in einem zweiten Worktree umsetzen lassen und beide Varianten
-  gegenüberstellen (Tests, Umfang der Änderung, Lesbarkeit). Gibt es weitere Take-aways die ins ADR sollen?
+- **Set-based Design:** Den zweitbeste Umsetzungsplan aus den ADR-Optionen in einem zweiten Worktree umsetzen lassen und beide Varianten gegenüberstellen (Tests, Umfang der Änderung, Lesbarkeit). Gibt es weitere Take-aways die ins ADR sollen?
 - **Diagramm als Text:** Der neue Bestellungsprozess als Mermaid-Diagramm nach `docs/diagrams/` zeichnen lassen

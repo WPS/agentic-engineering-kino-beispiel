@@ -1,0 +1,36 @@
+{
+  $schema: 'https://docs.renovatebot.com/renovate-schema.json',
+  extends: ['Renovatebot/renovate-config', 'config:best-practices'],
+  minimumReleaseAge: '14 days',
+  automerge: true,
+  automergeType: 'pr',
+  automergeStrategy: 'squash',
+  packageRules: [
+    {
+      description: 'Major updates always need manual review, never automerge',
+      matchUpdateTypes: ['major'],
+      automerge: false,
+    },
+    {
+      description: 'Angular-Pakete nur zusammen aktualisieren',
+      matchFileNames: ['frontend/package.json'],
+      matchPackageNames: [
+        '@angular/common',
+        '@angular/compiler',
+        '@angular/compiler-cli',
+        '@angular/core',
+        '@angular/forms',
+        '@angular/localize',
+        '@angular/platform-browser',
+        '@angular/platform-browser-dynamic',
+        '@angular/router',
+        '@angular/build',
+        '@angular/cli',
+      ],
+      groupName: 'angular monorepo',
+      minimumGroupSize: 11,
+      separateMinorPatch: true,
+      rangeStrategy: 'replace',
+    },
+  ],
+}

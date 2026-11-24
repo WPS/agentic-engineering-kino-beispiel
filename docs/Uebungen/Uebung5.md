@@ -1,6 +1,7 @@
 # Übung 5 – Neues Feature mit Workflow
 
 **Nicht fertig mit Ü4?** Fallback aus `Uebungen-Artefakte.zip` kopieren `adr`, `spezifikation` und git patch integrieren `popcorn-upsell.patch`
+Falls ihr den `klaeren` Skill aus Übung 3 nicht habt findet ihr ihn unter `Uebungen-Artefakte\Uebung-3\.agents\skills\klaeren` in der `Uebungen-Artefakte.zip`.
 
 ```bash
 git worktree add ../kino-popcorn-fallback -b popcorn-fallback main
@@ -31,7 +32,7 @@ den Subagenten `reviewer` aus `Uebungen-Artefakte.zip` kopieren und committen. D
 git worktree add ../kino-getraenke -b getraenke && cd ../kino-getraenke && (cd frontend && npm ci)
 ```
 
-**A2. Klären** Steht etwas nicht auf der Karte, lautet die Antwort: „Wissen wir noch nicht.“
+**A2. Klären** Wenn Du nach Aspekten gefragt wirst, auf die Du keine Antwort hast, antworte mit: „Wissen wir noch nicht.“
 
 Prompt:
 ```text
