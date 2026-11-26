@@ -53,6 +53,7 @@ public class WochenplanFixture implements Fixture {
     private static final String BACK_TO_THE_FUTURA = "Back to the Futura";
     private static final String CLOWN_WARS = "Clown Wars";
     private static final String FAST_AND_CURIOUS = "The Fast and the Curious";
+    private static final String UNSER_NEUER_SUBAGENT = "Unser neuer Subagent";
 
     private static final String GROSSER_SAAL = "großer Saal";
     private static final String KLEINER_SAAL = "kleiner Saal";
@@ -123,6 +124,14 @@ public class WochenplanFixture implements Fixture {
                         Ein rasanter Mix aus Action, Humor und katzenhafter Cleverness!""",
                 "Action, Adventure, Tierfilm", "Cat Moss", "Rob Kitten", "deutsch", Altersfreigabe.FSK16,
                 new Verleih("Schnurrende Motoren Verleih", Geldbetrag.euro(1600, 0), lizenzBeginn, lizenzEnde)));
+
+        registriereFilm(filme, new Film(new Filmtitel(UNSER_NEUER_SUBAGENT), 95, "assets/Unser_Neuer_Subagent.png",
+                """
+                        Ein Herz. Ein Kontextfenster. Eine Deadline.
+
+                        Katharina, Senior Prompt Engineerin mit einem Kontextfenster namens "Klaus" statt Beziehung, ist überzeugt: Der neue Kollege Semjon ist in Wahrheit eine KI – zu perfekt, zu charmant, zu reibungslos. Sie testet ihn heimlich mit Trick-Prompts und einem eskalierenden Turing-Test in der Kantine. Semjon hält sie für eine Firmenlegende und verliebt sich, ohne zu hinterfragen, ob das Feature oder Bug ist. Zwischen Sprint-Reviews, einem chaotischen Alpen-Offsite und einem Produktions-Fail, der halb Europa nur noch in Reimen sprechen lässt, müssen beide klären: Kann Liebe zwischen zwei Kontextfenstern den nächsten Reset überleben?""",
+                "Comedy", "Kathi und Semjon", "Dolly Parton", "deutsch", Altersfreigabe.FSK12,
+                new Verleih("Context Window Pictures", Geldbetrag.euro(1100, 0), lizenzBeginn, lizenzEnde)));
         return filme;
     }
 
@@ -136,6 +145,13 @@ public class WochenplanFixture implements Fixture {
     // Der Fahrplan ist ein Muster aus Wochentag + Uhrzeit; die konkreten Termine ergeben sich aus dem
     // Montag der Bezugswoche (siehe plane(...)). So bleibt das Programm relativ zum aktuellen Datum.
     private void planeVorstellungen(Wochenplan wochenplan, LocalDate montag, Map<String, Film> filme) {
+        plane(wochenplan, montag, filme.get(UNSER_NEUER_SUBAGENT), GROSSER_SAAL, Vorstellungskategorie.Standard, DayOfWeek.MONDAY, LocalTime.of(6, 30));
+        plane(wochenplan, montag, filme.get(UNSER_NEUER_SUBAGENT), GROSSER_SAAL, Vorstellungskategorie.Standard, DayOfWeek.TUESDAY, LocalTime.of(6, 30));
+        plane(wochenplan, montag, filme.get(UNSER_NEUER_SUBAGENT), GROSSER_SAAL, Vorstellungskategorie.Standard, DayOfWeek.WEDNESDAY, LocalTime.of(6, 30));
+        plane(wochenplan, montag, filme.get(UNSER_NEUER_SUBAGENT), GROSSER_SAAL, Vorstellungskategorie.Standard, DayOfWeek.THURSDAY, LocalTime.of(6, 30));
+        plane(wochenplan, montag, filme.get(UNSER_NEUER_SUBAGENT), GROSSER_SAAL, Vorstellungskategorie.Standard, DayOfWeek.FRIDAY, LocalTime.of(6, 30));
+        plane(wochenplan, montag, filme.get(UNSER_NEUER_SUBAGENT), GROSSER_SAAL, Vorstellungskategorie.Standard, DayOfWeek.SATURDAY, LocalTime.of(6, 30));
+        plane(wochenplan, montag, filme.get(UNSER_NEUER_SUBAGENT), GROSSER_SAAL, Vorstellungskategorie.Standard, DayOfWeek.SUNDAY, LocalTime.of(6, 30));
         plane(wochenplan, montag, filme.get(GUARDIANS), KLEINER_SAAL, Vorstellungskategorie.Kinderfilm, DayOfWeek.MONDAY, LocalTime.of(15, 0));
         plane(wochenplan, montag, filme.get(FAST_AND_CURIOUS), GROSSER_SAAL, Vorstellungskategorie.PrimeTime, DayOfWeek.MONDAY, LocalTime.of(20, 0));
         plane(wochenplan, montag, filme.get(STAR_BOARS), KLEINER_SAAL, Vorstellungskategorie.Standard, DayOfWeek.TUESDAY, LocalTime.of(15, 30));
